@@ -28,6 +28,7 @@
 #include <string.h>
 
 #include "base/types_def.h"
+
 static uint32_t *s_frame_buffer = 0;
 static uint32_t *s_offline_frame_buffer = 0;
 static aw_emwin_fb_info_t *s_awtk_fb = NULL;
