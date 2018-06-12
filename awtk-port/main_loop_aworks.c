@@ -22,11 +22,21 @@
 #include "aw_ts.h"
 #include "base/idle.h"
 #include "base/timer.h"
+#include "aw_prj_params.h"
 #include "lcd/lcd_mem_rgb565.h"
 #include "main_loop/main_loop_simple.h"
 
 static aw_ts_id ts_app_init(void) {
-  aw_ts_id sys_ts = sys_ts = aw_ts_serv_id_get("480x272", 0, 0);
+#if defined(AW_DEV_HW480272F)
+	const char* TS_SERVER_ID = "480x272";
+#elif defined(AW_DEV_HW800480F)
+	const char* TS_SERVER_ID = "800x480";
+#else
+//"not supported"
+#endif
+
+  aw_ts_id sys_ts = aw_ts_serv_id_get(TS_SERVER_ID, 0, 0);
+
   return_value_if_fail(sys_ts != NULL, NULL);
   return_value_if_fail(aw_ts_calc_data_read(sys_ts) == AW_OK, NULL);
 

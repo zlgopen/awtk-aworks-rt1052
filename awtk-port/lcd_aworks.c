@@ -23,6 +23,7 @@
 #include "aw_emwin_fb.h"
 #include "aw_sem.h"
 #include "aw_cache.h"
+#include "aw_mem.h"
 #include "aw_delay.h"
 #include "aw_vdebug.h"
 #include <string.h>
@@ -48,11 +49,11 @@ aw_emwin_fb_info_t* aworks_lcd_init(void) {
 
   fb_size = s_awtk_fb->x_res * s_awtk_fb->y_res * 2;
 
-  s_frame_buffer = (uint32_t*) aw_cache_dma_malloc(fb_size);
+  s_frame_buffer = (uint32_t*) aw_mem_alloc(fb_size);
   return_value_if_fail(s_frame_buffer != NULL, NULL);
   memset(s_frame_buffer, 0x00, fb_size);
 
-  s_offline_frame_buffer = (uint32_t*) aw_cache_dma_malloc(fb_size);
+  s_offline_frame_buffer = (uint32_t*) aw_mem_alloc(fb_size);
   return_value_if_fail(s_offline_frame_buffer != NULL, NULL);
   memset(s_offline_frame_buffer, 0x00, fb_size);
 
