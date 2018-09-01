@@ -21,7 +21,7 @@
 
 #include "aw_sem.h"
 #include "aw_mem.h"
-#include "base/mutex.h"
+#include "tkc/mutex.h"
 
 struct _tk_mutex_t {
   AW_MUTEX_DECL(__lock);

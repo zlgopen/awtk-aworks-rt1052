@@ -3,9 +3,9 @@
 #include "io/aw_dirent.h"
 #include "io/aw_fcntl.h"
 #include "fs/aw_mount.h"
-#include "base/fs.h"
-#include "base/mem.h"
-#include "base/utils.h"
+#include "tkc/fs.h"
+#include "tkc/mem.h"
+#include "tkc/utils.h"
 
 /*----------------------------------------------------------------------------*/
 /* ÎÄ¼þ²Ù×÷	                                                                  */

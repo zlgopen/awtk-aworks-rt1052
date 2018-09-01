@@ -21,9 +21,9 @@
 
 #include "aw_system.h"
 #include "aw_delay.h"
-#include "base/mem.h"
 #include "base/timer.h"
-#include "base/date_time.h"
+#include "tkc/mem.h"
+#include "tkc/date_time.h"
 
 #include <time.h>
 #include <sys/time.h>
