@@ -27,9 +27,23 @@ python copy_files.py
 "${workspace_loc:/${ProjName}/awtk/src}"
 "${workspace_loc:/${ProjName}/awtk/src/ext_widgets}"
 "${workspace_loc:/${ProjName}/awtk/3rd}"
-"${workspace_loc:/${ProjName}/awtk/3rd/pixman}"
+"${workspace_loc:/${ProjName}/awtk/3rd/pixman/pixman}"
 "${workspace_loc:/${ProjName}/awtk/3rd/cairo/cairo}"
 "${workspace_loc:/${ProjName}/awtk/3rd/gpinyin/include}"
 "${workspace_loc:/${ProjName}/awtk/3rd/libunibreak/src}"
 "${workspace_loc:/${ProjName}/awtk-port}"
+```
+
+或者直接修改.cproject文件，在相应位置加入：
+
+```
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk-port}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/src/ext_widgets}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/pixman/pixman}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/cairo/cairo}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/gpinyin/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/libunibreak/src}&quot;"/>
 ```
