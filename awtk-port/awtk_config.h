@@ -65,4 +65,10 @@
  */
 #define HAS_FAST_MEMCPY 1
 
+/**
+ * 如果启用NXP PXP硬件加速，请定义本宏
+ * 
+ */
+#define WITH_PXP_G2D 1
+
 #endif/*AWTK_CONFIG_H*/

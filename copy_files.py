@@ -33,6 +33,7 @@ def copyFiles(src, dst):
     shutil.copytree(s, d)
 
 copyFiles('awtk-port', DST_ROOT)
+copyFiles('user_code', DST_ROOT)
 copyFiles('awtk/3rd/cairo/cairo', DST_ROOT)
 copyFiles('awtk/3rd/pixman/pixman', DST_ROOT)
 copyFiles('awtk/3rd/gpinyin/src', DST_ROOT)
@@ -48,6 +49,7 @@ copyFiles('awtk/src/ui_loader', DST_ROOT)
 copyFiles('awtk/src/image_loader', DST_ROOT)
 copyFiles('awtk/src/ext_widgets', DST_ROOT)
 copyFiles('awtk/src/widget_animators', DST_ROOT)
+copyFiles('awtk/src/window_animators', DST_ROOT)
 copyFiles('awtk/src/window_animators', DST_ROOT)
 copyFiles('awtk/demos/assets', DST_ROOT)
 
@@ -71,6 +73,7 @@ for f in LCD_FILES:
 INPUT_METHODS_FILES=['input_engines/input_engine_pinyin.cpp',
         'input_methods/input_method_creator.c',
         'input_methods/input_method_default.inc',
+		'input_methods/input_method_null.inc',
         'input_methods/suggest_words.inc']
 for f in INPUT_METHODS_FILES:
     filename=os.path.join('awtk/src/', f);
@@ -86,3 +89,8 @@ for f in DEMO_FILES:
     filename=os.path.join('awtk/demos', f);
     copyFile(filename, DST_ROOT)
 
+
+STB_FILES=['stb_image.h', 'stb_sprintf.h', 'stb_truetype.h', 'stb_textedit.h']
+for f in STB_FILES:
+    filename=os.path.join('awtk/3rd/stb', f);
+    copyFile(filename, DST_ROOT)
