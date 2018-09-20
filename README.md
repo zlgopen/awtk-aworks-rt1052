@@ -27,8 +27,9 @@ python copy_files.py
 "${workspace_loc:/${ProjName}/awtk/src}"
 "${workspace_loc:/${ProjName}/awtk/src/ext_widgets}"
 "${workspace_loc:/${ProjName}/awtk/3rd}"
-"${workspace_loc:/${ProjName}/awtk/3rd/pixman/pixman}"
-"${workspace_loc:/${ProjName}/awtk/3rd/cairo/cairo}"
+"${workspace_loc:/${ProjName}/awtk/3rd/agge/src}"
+"${workspace_loc:/${ProjName}/awtk/3rd/agge/include}"
+"${workspace_loc:/${ProjName}/awtk/3rd/nanovg/src}"
 "${workspace_loc:/${ProjName}/awtk/3rd/gpinyin/include}"
 "${workspace_loc:/${ProjName}/awtk/3rd/libunibreak/src}"
 "${workspace_loc:/${ProjName}/awtk-port}"
@@ -42,8 +43,9 @@ python copy_files.py
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/src}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/src/ext_widgets}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/pixman/pixman}&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/cairo/cairo}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/nanovg/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/agge/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/agge/include}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/gpinyin/include}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/libunibreak/src}&quot;"/>
 ```

@@ -34,8 +34,8 @@ def copyFiles(src, dst):
 
 copyFiles('awtk-port', DST_ROOT)
 copyFiles('user_code', DST_ROOT)
-copyFiles('awtk/3rd/cairo/cairo', DST_ROOT)
-copyFiles('awtk/3rd/pixman/pixman', DST_ROOT)
+copyFiles('awtk/3rd/agge', DST_ROOT)
+copyFiles('awtk/3rd/nanovg/src', DST_ROOT)
 copyFiles('awtk/3rd/gpinyin/src', DST_ROOT)
 copyFiles('awtk/3rd/gpinyin/include', DST_ROOT)
 
@@ -52,7 +52,7 @@ copyFiles('awtk/demos/assets', DST_ROOT)
 
 copyFile('awtk/src/awtk.c', DST_ROOT)
 copyFile('awtk/src/awtk.h', DST_ROOT)
-copyFile('awtk/src/vgcanvas/vgcanvas_cairo.c', DST_ROOT)
+copyFile('awtk/src/vgcanvas/vgcanvas_nanovg.c', DST_ROOT)
 
 LCD_FILES=['lcd_mem.h', 
     'lcd_mem.inc', 
