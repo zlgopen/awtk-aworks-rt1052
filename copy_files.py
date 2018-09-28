@@ -34,7 +34,8 @@ def copyFiles(src, dst):
 
 copyFiles('awtk-port', DST_ROOT)
 copyFiles('user_code', DST_ROOT)
-copyFiles('awtk/3rd/agge', DST_ROOT)
+copyFiles('awtk/3rd/agge/src', DST_ROOT)
+copyFiles('awtk/3rd/agge/include', DST_ROOT)
 copyFiles('awtk/3rd/nanovg/src', DST_ROOT)
 copyFiles('awtk/3rd/gpinyin/src', DST_ROOT)
 copyFiles('awtk/3rd/gpinyin/include', DST_ROOT)
