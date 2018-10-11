@@ -23,7 +23,7 @@
 #include "base/idle.h"
 #include "base/timer.h"
 #include "aw_prj_params.h"
-#include "lcd/lcd_mem_rgb565.h"
+#include "lcd/lcd_mem_bgr565.h"
 #include "main_loop/main_loop_simple.h"
 
 static aw_ts_id ts_app_init(void) {
@@ -73,7 +73,7 @@ extern uint32_t* aworks_get_online_fb(void);
 extern uint32_t* aworks_get_offline_fb(void);
 
 lcd_t* platform_create_lcd(wh_t w, wh_t h) {
-  lcd_t* lcd = lcd_mem_rgb565_create_double_fb(w, h, (uint8_t*) aworks_get_online_fb(),
+  lcd_t* lcd = lcd_mem_bgr565_create_double_fb(w, h, (uint8_t*) aworks_get_online_fb(),
       (uint8_t*) aworks_get_offline_fb());
 
   return lcd;
