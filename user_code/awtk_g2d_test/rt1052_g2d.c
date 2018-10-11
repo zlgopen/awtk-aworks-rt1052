@@ -36,9 +36,9 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
     return_value_if_fail(fb != NULL && fb->data != NULL, RET_BAD_PARAMS);
     return_value_if_fail(img != NULL && img->data != NULL && src != NULL && dst != NULL,
                          RET_BAD_PARAMS);
-    return_value_if_fail(fb->format == BITMAP_FMT_RGB565 || fb->format == BITMAP_FMT_BGRA,
+    return_value_if_fail(fb->format == BITMAP_FMT_BGR565 || fb->format == BITMAP_FMT_BGRA8888,
                          RET_BAD_PARAMS);
-    return_value_if_fail(img->format == BITMAP_FMT_RGB565 || img->format == BITMAP_FMT_BGRA,
+    return_value_if_fail(img->format == BITMAP_FMT_BGR565 || img->format == BITMAP_FMT_BGRA8888,
                          RET_BAD_PARAMS);
 
     uint16_t as_x  = 0;
@@ -53,7 +53,7 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
 
     uint8_t *p_scale_buf = NULL;
 
-    if (img->format == BITMAP_FMT_RGB565) {
+    if (img->format == BITMAP_FMT_BGR565) {
         as_pixsize = 2;
         as_format = kPXP_AsPixelFormatRGB565;
     } else {
@@ -61,7 +61,7 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
         as_format = kPXP_AsPixelFormatARGB8888;
     }
 
-    if (fb->format == BITMAP_FMT_RGB565) {
+    if (fb->format == BITMAP_FMT_BGR565) {
         out_pixsize = 2;
         out_format = kPXP_OutputPixelFormatRGB565;
     } else {
@@ -120,7 +120,7 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
     /* 判断是否需要缩放 */
     if ((src->w != dst->w) || (src->h != dst->h)) {
 
-        if (img->format == BITMAP_FMT_RGB565) {
+        if (img->format == BITMAP_FMT_BGR565) {
             ps_pixsize = 2;
             ps_format = kPXP_PsPixelFormatRGB565;
 
@@ -297,7 +297,7 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
     return_value_if_fail(fb != NULL && img != NULL && src != NULL, RET_BAD_PARAMS);
     return_value_if_fail(fb->format == img->format, RET_BAD_PARAMS);
     return_value_if_fail(fb->w == img->h && fb->h == img->w, RET_BAD_PARAMS);
-    return_value_if_fail(fb->format == BITMAP_FMT_RGBA || fb->format == BITMAP_FMT_RGB565,
+    return_value_if_fail(fb->format == BITMAP_FMT_RGBA8888 || fb->format == BITMAP_FMT_BGR565,
                          RET_NOT_IMPL);
     //return RET_NOT_IMPL;
 
@@ -320,7 +320,7 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
     pxp_ps_buffer_config_t     ps_buffer_config;
 
 
-    if (img->format == BITMAP_FMT_RGB565) {
+    if (img->format == BITMAP_FMT_BGR565) {
         ps_pixsize = 2;
         ps_format = kPXP_PsPixelFormatRGB565;
     } else {
@@ -328,7 +328,7 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
         ps_format = kPXP_PsPixelFormatRGB888;
     }
 
-    if (fb->format == BITMAP_FMT_RGB565) {
+    if (fb->format == BITMAP_FMT_BGR565) {
         out_pixsize = 2;
         out_format = kPXP_OutputPixelFormatRGB565;
 

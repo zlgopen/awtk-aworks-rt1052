@@ -139,7 +139,7 @@ void demo_g2d(void)
             bmp_fb.w = __APP_PS_WIDTH;
             bmp_fb.h = __APP_PS_HEIGHT;
             bmp_fb.flags  = 0;
-            bmp_fb.format = BITMAP_FMT_RGB565;
+            bmp_fb.format = BITMAP_FMT_BGR565;
             bmp_fb.data = __gp_ps_buf;
 
             dst.x = 0;
@@ -150,7 +150,7 @@ void demo_g2d(void)
             bmp_img.w = __APP_AS_WIDTH;
             bmp_img.h = __APP_AS_HEIGHT;
             bmp_img.flags  = 0;
-            bmp_img.format = BITMAP_FMT_RGB565;
+            bmp_img.format = BITMAP_FMT_BGR565;
             bmp_img.data = __gp_as_buf;
 
             src.x = __APP_AS_WIDTH  / 4;
