@@ -34,9 +34,10 @@ def copyFiles(src, dst):
 
 copyFiles('awtk-port', DST_ROOT)
 copyFiles('user_code', DST_ROOT)
-copyFiles('awtk/3rd/agge/src', DST_ROOT)
-copyFiles('awtk/3rd/agge/include', DST_ROOT)
-copyFiles('awtk/3rd/nanovg/src', DST_ROOT)
+copyFiles('awtk/3rd/stb', DST_ROOT)
+copyFiles('awtk/3rd/agge', DST_ROOT)
+copyFiles('awtk/3rd/nanovg/base', DST_ROOT)
+copyFiles('awtk/3rd/nanovg/agge', DST_ROOT)
 copyFiles('awtk/3rd/gpinyin/src', DST_ROOT)
 copyFiles('awtk/3rd/gpinyin/include', DST_ROOT)
 
@@ -86,29 +87,9 @@ for f in DEMO_FILES:
     filename=os.path.join('awtk/demos', f);
     copyFile(filename, DST_ROOT)
 
-
-STB_FILES=['stb_image.h', 'stb_sprintf.h', 'stb_truetype.h', 'stb_textedit.h']
-for f in STB_FILES:
-    filename=os.path.join('awtk/3rd/stb', f);
-    copyFile(filename, DST_ROOT)
-
-	
 WINDOW_ANIMATORS_FILES=['bottom_to_top.inc', 'top_to_bottom.inc', 'center_scale.inc', 'vtranslate.inc',
 'common.inc', 'window_animator_fb.c', 'fade.inc', 'htranslate.inc']
 for f in WINDOW_ANIMATORS_FILES:
     filename=os.path.join('awtk/src/window_animators', f);
     copyFile(filename, DST_ROOT)
 
-UNIBREAK_FILES=[
-'linebreak.c', 'linebreakdata3.tmpl', 'wordbreak.h',
-'graphemebreak.c', 'linebreak.h', 'linebreakdef.c', 'wordbreakdata.c',
-'graphemebreak.h', 'linebreakdef.h', 'unibreakbase.c', 'wordbreakdata1.tmpl',
-'graphemebreakdata.c', 'unibreakbase.h', 'wordbreakdata2.tmpl',
-'graphemebreakdata1.tmpl', 'linebreakdata.c', 'unibreakdef.c', 'wordbreakdef.h',
-'graphemebreakdata2.tmpl', 'linebreakdata1.tmpl', 'unibreakdef.h',
-'graphemebreakdef.h', 'linebreakdata2.tmpl', 'wordbreak.c'
-]
-for f in UNIBREAK_FILES:
-    filename=os.path.join('awtk/3rd/libunibreak/src/', f);
-    copyFile(filename, DST_ROOT)
-	
