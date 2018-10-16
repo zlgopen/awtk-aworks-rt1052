@@ -69,43 +69,12 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
         out_format = kPXP_OutputPixelFormatRGB888;
     }
 
-    if (as_format == kPXP_AsPixelFormatARGB8888) {
-
-        /* 大小 cache line 对齐  */
-        size = (img->w * img->h * as_pixsize+ AW_CACHE_LINE_SIZE - 1) /
-                AW_CACHE_LINE_SIZE * AW_CACHE_LINE_SIZE;
-        p_src_data = (uint8_t *)aw_mem_align(size, AW_CACHE_LINE_SIZE);
-        return_value_if_fail(p_src_data != NULL, RET_FAIL);
-        memcpy(p_src_data, img->data, img->w * img->h * as_pixsize);
-
-//        /* 将RGBA8888转换为BGRA8888,只对src区域进行转换 */
-//        int i = 0, j = 0;
-//        uint8_t temp = 0;
-//        uint8_t *addr = NULL;
-//
-//        for (j = src->y; j < src->h; j++) {
-//
-//            addr = p_src_data + (j * img->w + src->x) * as_pixsize;
-//            for (i = 0; i < src->w * as_pixsize; i += 4) {
-//                temp = addr[i + 0];
-//                addr[i + 0] = addr[i + 2];
-//                addr[i + 2] = temp;
-//            }
-//        }
-
-    } else if ((uint32_t)img->data % 32) {
-
-        size = (img->w * img->h * as_pixsize+ AW_CACHE_LINE_SIZE - 1) /
-                       AW_CACHE_LINE_SIZE * AW_CACHE_LINE_SIZE;
-        p_src_data = (uint8_t *)aw_mem_align(size, AW_CACHE_LINE_SIZE);
-        return_value_if_fail(p_src_data != NULL, RET_FAIL);
-        memcpy(p_src_data, img->data, img->w * img->h * as_pixsize);
-
+	if ((uint32_t)img->data % 32) {
+		assert(!"address must align to 32 bytes");
+		return RET_NOT_IMPL;
     } else {
-
         p_src_data = (uint8_t *)img->data;
     }
-
 
     as_x = src->x;
     as_y = src->y;

@@ -89,13 +89,14 @@ for f in WINDOW_ANIMATORS_FILES:
     filename=os.path.join('awtk/src/window_animators', f);
     copyFile(filename, filename)
 
-copyFiles('pxp', 'pxp')
-
 DEMO_FILES=['assets.h', 'assets.c', 'demo_main.c', 'demo_ui_app.c', 'common.inc']
 for f in DEMO_FILES:
     sfilename=os.path.join('awtk/demos', f);
     dfilename=os.path.join('awtk-demos/', f);
     copyFile(sfilename, dfilename)
-copyFile('user_code/main.c', 'awtk-demos/main.c')	
+
 copyFiles('awtk/demos/assets', 'awtk-demos/assets')
+
+copyFiles('pxp', 'pxp')
+# copyFile('user_code/main.c', 'awtk-demos/main.c')	
 
