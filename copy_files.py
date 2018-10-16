@@ -12,11 +12,11 @@ def joinPath(root, subdir):
 # XXX: make sure no no ascii chars in the path name.
 
 SRC_ROOT_DIR=os.getcwd();
-DST_ROOT='D:\\work\\AWorks\\sdk\\aworks_m105x_sdk_1.0.1-alpha\\img_rt1050_debug';
+DST_ROOT_DIR='D:\\work\\m1052_board\\broad';
 
 def copyFile(src, dst):
     s = joinPath(SRC_ROOT_DIR, src)
-    d = joinPath(dst, src)
+    d = joinPath(DST_ROOT_DIR, dst)
     print(s + '->' + d)
     dir=os.path.dirname(d)
     if os.path.exists(dir):
@@ -27,36 +27,34 @@ def copyFile(src, dst):
 
 def copyFiles(src, dst):
     s = joinPath(SRC_ROOT_DIR, src)
-    d = joinPath(dst, src)
+    d = joinPath(DST_ROOT_DIR, dst)
     print(s + '->' + d)
     shutil.rmtree(d, True)
     shutil.copytree(s, d)
 
-copyFiles('awtk-port', DST_ROOT)
-copyFiles('user_code', DST_ROOT)
-copyFiles('awtk/3rd/stb', DST_ROOT)
-copyFiles('awtk/3rd/libunibreak', DST_ROOT)
+copyFiles('awtk-port', 'awtk-port')
+copyFiles('awtk/3rd/stb', 'awtk/3rd/stb')
+copyFiles('awtk/3rd/libunibreak', 'awtk/3rd/libunibreak')
 
-copyFiles('awtk/3rd/agge', DST_ROOT)
-copyFiles('awtk/3rd/nanovg/base', DST_ROOT)
-copyFiles('awtk/3rd/nanovg/agge', DST_ROOT)
-copyFiles('awtk/3rd/gpinyin/src', DST_ROOT)
-copyFiles('awtk/3rd/gpinyin/include', DST_ROOT)
+copyFiles('awtk/3rd/agge', 'awtk/3rd/agge')
+copyFiles('awtk/3rd/nanovg/base', 'awtk/3rd/nanovg/base')
+copyFiles('awtk/3rd/nanovg/agge', 'awtk/3rd/nanovg/agge')
+copyFiles('awtk/3rd/gpinyin/src', 'awtk/3rd/gpinyin/src')
+copyFiles('awtk/3rd/gpinyin/include', 'awtk/3rd/gpinyin/include')
 
-copyFiles('awtk/src/misc', DST_ROOT)
-copyFiles('awtk/src/xml', DST_ROOT)
-copyFiles('awtk/src/base', DST_ROOT)
-copyFiles('awtk/src/font', DST_ROOT)
-copyFiles('awtk/src/blend', DST_ROOT)
-copyFiles('awtk/src/ui_loader', DST_ROOT)
-copyFiles('awtk/src/image_loader', DST_ROOT)
-copyFiles('awtk/src/ext_widgets', DST_ROOT)
-copyFiles('awtk/src/widget_animators', DST_ROOT)
-copyFiles('awtk/demos/assets', DST_ROOT)
+copyFiles('awtk/src/misc', 'awtk/src/misc')
+copyFiles('awtk/src/xml', 'awtk/src/xml')
+copyFiles('awtk/src/base', 'awtk/src/base')
+copyFiles('awtk/src/font', 'awtk/src/font')
+copyFiles('awtk/src/blend', 'awtk/src/blend')
+copyFiles('awtk/src/ui_loader', 'awtk/src/ui_loader')
+copyFiles('awtk/src/image_loader', 'awtk/src/image_loader')
+copyFiles('awtk/src/ext_widgets', 'awtk/src/ext_widgets')
+copyFiles('awtk/src/widget_animators', 'awtk/src/widget_animators')
 
-copyFile('awtk/src/awtk.c', DST_ROOT)
-copyFile('awtk/src/awtk.h', DST_ROOT)
-copyFile('awtk/src/vgcanvas/vgcanvas_nanovg.c', DST_ROOT)
+copyFile('awtk/src/awtk.c', 'awtk/src/awtk.c')
+copyFile('awtk/src/awtk.h', 'awtk/src/awtk.h')
+copyFile('awtk/src/vgcanvas/vgcanvas_nanovg.c', 'awtk/src/vgcanvas/vgcanvas_nanovg.c')
 
 LCD_FILES=['lcd_mem.h', 
     'lcd_mem.inc', 
@@ -68,7 +66,7 @@ LCD_FILES=['lcd_mem.h',
     'lcd_mem_bgr565.c']
 for f in LCD_FILES:
     filename=os.path.join('awtk/src/lcd/', f);
-    copyFile(filename, DST_ROOT)
+    copyFile(filename, filename)
 
 INPUT_METHODS_FILES=['input_engines/input_engine_pinyin.cpp',
         'input_methods/input_method_creator.c',
@@ -77,21 +75,27 @@ INPUT_METHODS_FILES=['input_engines/input_engine_pinyin.cpp',
         'input_methods/suggest_words.inc']
 for f in INPUT_METHODS_FILES:
     filename=os.path.join('awtk/src/', f);
-    copyFile(filename, DST_ROOT)
+    copyFile(filename, filename)
 
 MAIN_LOOP_FILES=['main_loop_simple.h', 'main_loop_simple.c', 'main_loop_raw.inc']
 for f in MAIN_LOOP_FILES:
     filename=os.path.join('awtk/src/main_loop', f);
-    copyFile(filename, DST_ROOT)
+    copyFile(filename, filename)
 
-DEMO_FILES=['assets.h', 'assets.c', 'demo_main.c', 'demo_ui_app.c', 'common.inc']
-for f in DEMO_FILES:
-    filename=os.path.join('awtk/demos', f);
-    copyFile(filename, DST_ROOT)
 
 WINDOW_ANIMATORS_FILES=['bottom_to_top.inc', 'top_to_bottom.inc', 'center_scale.inc', 'vtranslate.inc',
 'common.inc', 'window_animator_fb.c', 'fade.inc', 'htranslate.inc']
 for f in WINDOW_ANIMATORS_FILES:
     filename=os.path.join('awtk/src/window_animators', f);
-    copyFile(filename, DST_ROOT)
+    copyFile(filename, filename)
+
+copyFiles('pxp', 'pxp')
+
+DEMO_FILES=['assets.h', 'assets.c', 'demo_main.c', 'demo_ui_app.c', 'common.inc']
+for f in DEMO_FILES:
+    sfilename=os.path.join('awtk/demos', f);
+    dfilename=os.path.join('awtk-demos/', f);
+    copyFile(sfilename, dfilename)
+copyFile('user_code/main.c', 'awtk-demos/main.c')	
+copyFiles('awtk/demos/assets', 'awtk-demos/assets')
 

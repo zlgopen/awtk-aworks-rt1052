@@ -33,6 +33,9 @@ python copy_files.py
 "${workspace_loc:/${ProjName}/awtk/3rd/gpinyin/include}"
 "${workspace_loc:/${ProjName}/awtk/3rd/libunibreak}"
 "${workspace_loc:/${ProjName}/awtk-port}"
+"${workspace_loc:/${ProjName}/awtk-demos}"
+"${workspace_loc:/${ProjName}/pxp}"
+"${workspace_loc:/${ProjName}/app}"
 ```
 
 或者直接修改.cproject文件，在相应位置加入：
@@ -40,6 +43,7 @@ python copy_files.py
 ```
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk-port}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk-demos}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/src}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/src/ext_widgets}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd}&quot;"/>
@@ -48,4 +52,6 @@ python copy_files.py
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/agge}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/gpinyin/include}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/libunibreak}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/pxp}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/app}&quot;"/>
 ```
