@@ -35,6 +35,8 @@ def copyFiles(src, dst):
 copyFiles('awtk-port', DST_ROOT)
 copyFiles('user_code', DST_ROOT)
 copyFiles('awtk/3rd/stb', DST_ROOT)
+copyFiles('awtk/3rd/libunibreak', DST_ROOT)
+
 copyFiles('awtk/3rd/agge', DST_ROOT)
 copyFiles('awtk/3rd/nanovg/base', DST_ROOT)
 copyFiles('awtk/3rd/nanovg/agge', DST_ROOT)
