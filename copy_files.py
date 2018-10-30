@@ -12,6 +12,7 @@ import platform
 AWTK_ROOT_DIR = 'D:/z_lab';
 PORT_ROOT_DIR = os.getcwd();
 DST_ROOT_DIR = 'D:/z_lab/awtk-aworks-rt1052/broad';
+NANOVG_BACKEND = 'AGGE'
 
 
 def joinPath(root, subdir):
@@ -51,16 +52,24 @@ copyPortFiles('awtk-port', 'awtk-port')
 copyAwtkFiles('awtk/3rd/stb', 'awtk/3rd/stb')
 copyAwtkFiles('awtk/3rd/libunibreak', 'awtk/3rd/libunibreak')
 
-copyAwtkFiles('awtk/3rd/agge', 'awtk/3rd/agge')
 copyAwtkFiles('awtk/3rd/nanovg/base', 'awtk/3rd/nanovg/base')
-copyAwtkFiles('awtk/3rd/nanovg/agge', 'awtk/3rd/nanovg/agge')
+if NANOVG_BACKEND == 'AGG':
+  copyAwtkFiles('awtk/3rd/agg', 'awtk/3rd/agg')
+  copyAwtkFiles('awtk/3rd/nanovg/agg', 'awtk/3rd/nanovg/agg')
+elif NANOVG_BACKEND == 'AGGE':
+  copyAwtkFiles('awtk/3rd/agge', 'awtk/3rd/agge')
+  copyAwtkFiles('awtk/3rd/nanovg/agge', 'awtk/3rd/nanovg/agge')
+elif NANOVG_BACKEND == 'BGFX':
+  copyAwtkFiles('awtk/3rd/nanovg/bgfx', 'awtk/3rd/nanovg/bgfx')
+else:
+  copyAwtkFiles('awtk/3rd/nanovg/gl', 'awtk/3rd/nanovg/gl')
 copyAwtkFiles('awtk/3rd/gpinyin/src', 'awtk/3rd/gpinyin/src')
 copyAwtkFiles('awtk/3rd/gpinyin/include', 'awtk/3rd/gpinyin/include')
 
 copyAwtkFiles('awtk/src/misc', 'awtk/src/misc')
 copyAwtkFiles('awtk/src/xml', 'awtk/src/xml')
 copyAwtkFiles('awtk/src/base', 'awtk/src/base')
-copyAwtkFiles('awtk/src/font', 'awtk/src/font')
+copyAwtkFiles('awtk/src/font_loader', 'awtk/src/font_loader')
 copyAwtkFiles('awtk/src/blend', 'awtk/src/blend')
 copyAwtkFiles('awtk/src/ui_loader', 'awtk/src/ui_loader')
 copyAwtkFiles('awtk/src/image_loader', 'awtk/src/image_loader')

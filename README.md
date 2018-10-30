@@ -57,6 +57,8 @@ python copy_files.py
 
    awtk相关的包含路径如下：
 
+   NANOVG_BACKEND = "AGGE"时，
+
    ```
    "${workspace_loc:/${ProjName}/awtk/}"
    "${workspace_loc:/${ProjName}/awtk/src}"
@@ -70,8 +72,27 @@ python copy_files.py
    "${workspace_loc:/${ProjName}/awtk-port}"
    "${workspace_loc:/${ProjName}/pxp}"
    ```
+   NANOVG_BACKEND = "AGG"时，
+
+   ```
+   "${workspace_loc:/${ProjName}/awtk/}"
+   "${workspace_loc:/${ProjName}/awtk/src}"
+   "${workspace_loc:/${ProjName}/awtk/src/ext_widgets}"
+   "${workspace_loc:/${ProjName}/awtk/3rd}"
+   "${workspace_loc:/${ProjName}/awtk/3rd/agg/include}"
+   "${workspace_loc:/${ProjName}/awtk/3rd/nanovg}"
+   "${workspace_loc:/${ProjName}/awtk/3rd/nanovg/base}"
+   "${workspace_loc:/${ProjName}/awtk/3rd/gpinyin/include}"
+   "${workspace_loc:/${ProjName}/awtk/3rd/libunibreak}"
+   "${workspace_loc:/${ProjName}/awtk-port}"
+   "${workspace_loc:/${ProjName}/pxp}"
+   ```
+
+   
 
 2. 直接修改AWorks工程的.cproject文件，找到所有 name="Cross ARM C Compiler"或者name="Cross ARM C++ Compiler"的tool元素，在name="Include paths (-I)"的option子元素中加入：
+
+   NANOVG_BACKEND = "AGGE"时，
 
 ```
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk}&quot;"/>
@@ -87,6 +108,35 @@ python copy_files.py
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/pxp}&quot;"/>
 ```
 
+​       NANOVG_BACKEND = "AGG"时，
+
+```
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/src/ext_widgets}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/agg/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/nanovg}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/nanovg/base}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/gpinyin/include}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk/3rd/libunibreak}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/awtk-port}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/pxp}&quot;"/>
+```
+
 ## 二、注意事项
 
-  AWorks工程的*.ld文件切忌随意修改，这可能会导致内存读写异常（比如读写速度严重变慢）。
+1、awtk-port/platfrom.c中的 TK_MEM_SIZE 须小于 AWorks 工程的 *.ld 文件中定义的 heap 大小。比如 rt1050_sdram.ld 中定义了 heap 为8M，则 TK_MEM_SIZE 须小于8M。
+
+```
+MEMORY
+{
+    data (xrw)             : ORIGIN = 0x20000000, LENGTH = 512K
+    flexspi_drv(rx)        : ORIGIN = 0x80000000, LENGTH = 4K
+    code (rx)              : ORIGIN = 0x80002000, LENGTH = 6M
+    dma_heap (rw)          : ORIGIN = 0x80602000, LENGTH = 1M
+    heap (rw)              : ORIGIN = 0x80702000, LENGTH = 8M
+}
+```
+
+2、AWorks工程的*.ld文件切忌随意修改，这可能会导致内存读写异常（比如读写速度严重变慢）。
