@@ -14,12 +14,13 @@ git clone https://github.com/zlgopen/awtk.git
 
 #### 1.2 修改 copy\_files.py
 
-  主要有如下两项：
+  主要有如下3项：
 
 - 设置AWTK_ROOT_DIR（即awtk根目录）；
 
 
-- 设置DST_ROOT_DIR（即输出目录）。一般该目录为AWorks工程目录, 不支持中文。
+- 设置DST_ROOT_DIR（即输出目录）。一般该目录为AWorks工程目录（即.project文件的目录）, 不支持中文。
+- 设置NANOVG_BACKEND（即nanovg后端类型），目前有AGG、AGGE两种选项。
 
 #### 1.3 执行 copy\_files.py
 
