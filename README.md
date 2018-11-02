@@ -16,7 +16,7 @@ git clone https://github.com/zlgopen/awtk.git
 
   主要有如下两项：
 
-- 设置AWTK_ROOT_DIR（即awtk所在目录）；
+- 设置AWTK_ROOT_DIR（即awtk根目录）；
 
 
 - 设置DST_ROOT_DIR（即输出目录）。一般该目录为AWorks工程目录, 不支持中文。
