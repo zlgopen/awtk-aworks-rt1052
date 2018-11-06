@@ -141,17 +141,31 @@ python copy_files.py
 
 ## 二、注意事项
 
-1、awtk-port/platfrom.c中的 TK_MEM_SIZE 须小于 AWorks 工程的 *.ld 文件中定义的 heap 大小。比如 rt1050_sdram.ld 中定义了 heap 为9M，则 TK_MEM_SIZE 须小于9M。
+1、awtk-port/platfrom.c中的 TK_MEM_SIZE 须小于 AWorks 工程的 *.ld 文件中定义的 heap 大小。比如 rt1050_sdram.ld 中定义了 heap 为11M，则 TK_MEM_SIZE 须小于11M。
+
+**code = 4M的配置**
 
 ```
 MEMORY
 {
     data (xrw)             : ORIGIN = 0x20000000, LENGTH = 512K
-    flexspi_drv(xr)        : ORIGIN = 0x80000000, LENGTH = 4K
+    flexspi_drv(rx)        : ORIGIN = 0x80000000, LENGTH = 4K
     code (rx)              : ORIGIN = 0x80002000, LENGTH = 4088K
-    no_cache_heap(rw)      : ORIGIN = 0x80400000, LENGTH = 2M
-    dma_heap (rw)          : ORIGIN = 0x80600000, LENGTH = 1M
-    heap (rw)              : ORIGIN = 0x80700000, LENGTH = 9M
+    dma_heap (rw)          : ORIGIN = 0x80400000, LENGTH = 1M
+    heap (rw)              : ORIGIN = 0x80500000, LENGTH = 11M
+}
+```
+
+**code = 8M的配置**
+
+```
+MEMORY
+{
+    data (xrw)             : ORIGIN = 0x20000000, LENGTH = 512K
+    flexspi_drv(rx)        : ORIGIN = 0x80000000, LENGTH = 4K
+    code (rx)              : ORIGIN = 0x80002000, LENGTH = 8184K
+    dma_heap (rw)          : ORIGIN = 0x80800000, LENGTH = 1M
+    heap (rw)              : ORIGIN = 0x80900000, LENGTH = 7M
 }
 ```
 
