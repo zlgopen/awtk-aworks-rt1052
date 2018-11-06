@@ -68,7 +68,7 @@
  * 如果启用NXP PXP硬件加速，请定义本宏
  * 
  */
-#define WITH_PXP_G2D 1
+//#define WITH_PXP_G2D 1
 
 /**
  * 如果FLASH空间较小，不足以放大字体文件时，请定义本宏
