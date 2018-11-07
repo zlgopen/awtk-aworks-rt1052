@@ -20,6 +20,8 @@
  */
 
 #include "aw_ts.h"
+#include "aw_cache.h"
+#include "aw_emwin_fb.h"
 #include "base/idle.h"
 #include "base/timer.h"
 #include "aw_prj_params.h"
@@ -71,10 +73,33 @@ ret_t platform_disaptch_input(main_loop_t* loop) {
 
 extern uint32_t* aworks_get_online_fb(void);
 extern uint32_t* aworks_get_offline_fb(void);
+extern aw_emwin_fb_info_t* aworks_get_fb(void);
+extern int aworks_get_fb_size();
+static lcd_flush_t s_lcd_flush_default = NULL;
+
+static ret_t lcd_aworks_fb_flush(lcd_t* lcd) {
+#if 0  // 是否等待垂直同步
+  // aw_emwin_fb_vram_addr_set 与 aw_cache_flush 配合用效果最好，但有等待时间
+  aw_emwin_fb_vram_addr_set(aworks_get_fb(), aworks_get_online_fb()); // max 13ms wait
+#endif
+
+  if (s_lcd_flush_default != NULL) {
+    s_lcd_flush_default(lcd);
+  }
+
+  // 单用 aw_cache_flush 能极大改善干扰线问题，但不能完全去除
+  aw_cache_flush(aworks_get_online_fb(), aworks_get_fb_size()); // max 2ms wait
+  return RET_OK;
+}
 
 lcd_t* platform_create_lcd(wh_t w, wh_t h) {
   lcd_t* lcd = lcd_mem_bgr565_create_double_fb(w, h, (uint8_t*) aworks_get_online_fb(),
       (uint8_t*) aworks_get_offline_fb());
+
+  if (lcd != NULL) {
+    s_lcd_flush_default = lcd->flush;
+    lcd->flush = lcd_aworks_fb_flush;
+  }
 
   return lcd;
 }
