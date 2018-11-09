@@ -54,7 +54,8 @@ copyFiles('awtk/src/widget_animators', 'awtk/src/widget_animators')
 
 copyFile('awtk/src/awtk.c', 'awtk/src/awtk.c')
 copyFile('awtk/src/awtk.h', 'awtk/src/awtk.h')
-copyFile('awtk/src/vgcanvas/vgcanvas_nanovg.c', 'awtk/src/vgcanvas/vgcanvas_nanovg.c')
+copyFile('awtk/src/vgcanvas/vgcanvas_nanovg_soft.c', 'awtk/src/vgcanvas/vgcanvas_nanovg_soft.c')
+copyFile('awtk/src/vgcanvas/vgcanvas_nanovg_soft.inc', 'awtk/src/vgcanvas/vgcanvas_nanovg_soft.inc')
 
 LCD_FILES=['lcd_mem.h', 
     'lcd_mem.inc', 
