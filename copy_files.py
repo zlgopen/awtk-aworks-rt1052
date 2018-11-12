@@ -79,6 +79,7 @@ copyAwtkFile('src/awtk.c', 'awtk/src/awtk.c')
 copyAwtkFile('src/awtk.h', 'awtk/src/awtk.h')
 copyAwtkFile('src/vgcanvas/vgcanvas_nanovg_soft.c', 'awtk/src/vgcanvas/vgcanvas_nanovg_soft.c')
 copyAwtkFile('src/vgcanvas/vgcanvas_nanovg_soft.inc', 'awtk/src/vgcanvas/vgcanvas_nanovg_soft.inc')
+copyAwtkFile('src/vgcanvas/vgcanvas_nanovg.inc', 'awtk/src/vgcanvas/vgcanvas_nanovg.inc')
 
 LCD_FILES=['lcd_mem.h',
     'lcd_mem.inc',
