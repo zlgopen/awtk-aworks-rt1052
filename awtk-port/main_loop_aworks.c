@@ -92,13 +92,44 @@ static ret_t lcd_aworks_fb_flush(lcd_t* lcd) {
   return RET_OK;
 }
 
+static ret_t lcd_aworks_begin_frame(lcd_t* lcd, rect_t* dirty_rect) {
+  if (lcd_is_swappable(lcd)) {
+    lcd_mem_t* mem = (lcd_mem_t*)lcd;
+
+    // 拷贝上一屏数据到offline fb作为背景, begin_frame之后只绘制脏矩形区域
+    //memset(mem->offline_fb, 0, aworks_get_fb_size());
+    memcpy(mem->offline_fb, mem->online_fb, aworks_get_fb_size());
+  }
+
+  return RET_OK;
+}
+
+static ret_t lcd_aworks_swap(lcd_t* lcd) {
+  lcd_mem_t* mem = (lcd_mem_t*)lcd;
+
+  uint8_t* next_online_fb = mem->offline_fb;
+  mem->offline_fb = mem->online_fb;
+  mem->online_fb = next_online_fb;
+
+  aw_cache_flush(next_online_fb, aworks_get_fb_size()); // max 2ms wait
+  aw_emwin_fb_vram_addr_set(aworks_get_fb(), next_online_fb); // max 13ms wait
+  return RET_OK;
+}
+
 lcd_t* platform_create_lcd(wh_t w, wh_t h) {
   lcd_t* lcd = lcd_mem_bgr565_create_double_fb(w, h, (uint8_t*) aworks_get_online_fb(),
       (uint8_t*) aworks_get_offline_fb());
 
   if (lcd != NULL) {
+#if 0
+	// 改进flush机制
     s_lcd_flush_default = lcd->flush;
     lcd->flush = lcd_aworks_fb_flush;
+#else
+    // 使用swap机制
+    lcd->begin_frame = lcd_aworks_begin_frame;
+    lcd->swap = lcd_aworks_swap;
+#endif
   }
 
   return lcd;
