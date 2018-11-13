@@ -57,13 +57,14 @@ aw_emwin_fb_info_t* aworks_lcd_init(void) {
   return_value_if_fail(s_awtk_fb != NULL, NULL);
 
   fb_size = s_awtk_fb->x_res * s_awtk_fb->y_res * 2;
+  fb_size = (fb_size + AW_CACHE_LINE_SIZE - 1) / AW_CACHE_LINE_SIZE * AW_CACHE_LINE_SIZE;
   s_fb_size = fb_size;
 
-  s_frame_buffer = (uint32_t*) aw_mem_align(fb_size,128);
+  s_frame_buffer = (uint32_t*) aw_mem_align(fb_size, AW_CACHE_LINE_SIZE);
   return_value_if_fail(s_frame_buffer != NULL, NULL);
   memset(s_frame_buffer, 0x00, fb_size);
 
-  s_offline_frame_buffer = (uint32_t*) aw_mem_align(fb_size,128);
+  s_offline_frame_buffer = (uint32_t*) aw_mem_align(fb_size, AW_CACHE_LINE_SIZE);
   return_value_if_fail(s_offline_frame_buffer != NULL, NULL);
   memset(s_offline_frame_buffer, 0x00, fb_size);
 
