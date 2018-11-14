@@ -30,7 +30,7 @@ struct _tk_mutex_t {
 static tk_mutex_t s_tk_mutex_null;
 
 tk_mutex_t* tk_mutex_create() {
-  tk_mutex_t* mutex = TKMEM_ALLOC(sizeof(tk_mutex_t));
+  tk_mutex_t* mutex = TKMEM_ZALLOC(tk_mutex_t);
   if (mutex) {
   	AW_MUTEX_INIT(mutex->__lock, AW_SEM_INVERSION_SAFE);
   }
