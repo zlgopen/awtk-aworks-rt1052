@@ -129,7 +129,7 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
 
   if (lcd != NULL) {
 #if 0
-	// 改进flush机制, 每次flush后加入cache_flush
+    // 改进flush机制, 每次flush后加入cache_flush
     s_lcd_flush_default = lcd->flush;
     lcd->flush = lcd_aworks_fb_flush;
 #else
