@@ -24,18 +24,11 @@
 #define __AWBL_IMX1050_PXP_H
 
 #include "apollo.h"
-#include "aw_gpio.h"
-#include "awbus_lite.h"
-#include "aw_sem.h"
-#include "aw_gpio.h"
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus  */
-
-/** \brief iMX RT1050 PXP 驱动名 */
-#define IMX1050_PXP_NAME            "imx1050_pxp"
 
 
 /**
@@ -275,9 +268,9 @@ void pxp_set_alpha_surface_blend_config(const pxp_as_blend_config_t *p_config);
 
 
 /**
- * \brief 配置输出缓冲区
+ * \brief 输出缓冲区配置
  *
- * \param[in] p_config  配置信息
+ * \param[in] p_config  Buffer配置信息
  *
  * \return    无
  *
@@ -291,8 +284,8 @@ void pxp_set_output_buffer_config(const pxp_output_buffer_config_t *p_config);
  *
  * \param[in] ul_x  左上角x坐标
  * \param[in] ul_y  左上角y坐标
- * \param[in] lr_x  右下脚x坐标
- * \param[in] lr_y  右下脚y坐标
+ * \param[in] lr_x  右下角x坐标
+ * \param[in] lr_y  右下角y坐标
  *
  * \return    无
  *
@@ -307,8 +300,8 @@ void pxp_set_process_surface_position(uint16_t ul_x,
  *
  * \param[in] ul_x  左上角x坐标
  * \param[in] ul_y  左上角y坐标
- * \param[in] lr_x  右下脚x坐标
- * \param[in] lr_y  右下脚y坐标
+ * \param[in] lr_x  右下角x坐标
+ * \param[in] lr_y  右下角y坐标
  *
  * \return    无
  *
@@ -348,6 +341,16 @@ void pxp_set_rotate_config(pxp_rotate_position_t position,
                            pxp_rotate_degree_t   degree,
                            pxp_flip_mode_t       flip_mode);
 
+/**
+ * \brief 设置PS ColorKey
+ *
+ * \param[in] color_key_l   Low range of color key applied to PS buffer.
+ * \param[in] color_key_h   High range of color key applied to PS buffer.
+ *
+ * \return    无
+ */
+void pxp_set_process_surface_color_key(uint32_t color_key_l,
+                                       uint32_t color_key_h);
 
 /**
  * \brief 设置是否使能颜色空间转换
@@ -383,6 +386,14 @@ void pxp_complete_status_sync(void);
  * \return    无
  */
 void pxp_hard_reset(void);
+
+
+/**
+ * \brief 初始化i.MX RT1050 PXP硬件
+ *
+ * \return    无
+ */
+void awbl_imx1050_pxp_init(void);
 
 
 #ifdef __cplusplus
