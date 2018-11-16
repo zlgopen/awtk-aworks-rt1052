@@ -30,9 +30,9 @@
 
 static aw_ts_id ts_app_init(void) {
 #if defined(AW_DEV_HW480272F)
-	const char* TS_SERVER_ID = "480x272";
+	char TS_SERVER_ID[] = "480x272";
 #elif defined(AW_DEV_HW800480F)
-	const char* TS_SERVER_ID = "800x480";
+	char TS_SERVER_ID[] = "800x480";
 #else
 //"not supported"
 #endif
@@ -95,6 +95,7 @@ static ret_t lcd_aworks_fb_flush(lcd_t* lcd) {
 static ret_t lcd_aworks_begin_frame(lcd_t* lcd, rect_t* dirty_rect) {
   if (lcd_is_swappable(lcd)) {
     lcd_mem_t* mem = (lcd_mem_t*)lcd;
+    (void)mem;
 
 #if 0 // 拷贝上一屏数据到offline fb作为背景, begin_frame之后只绘制脏矩形区域
     // 当前的awtk脏矩形实现机制: 每帧begin_frame时的脏矩形是与上一帧的脏矩形合并一次
@@ -119,7 +120,7 @@ static ret_t lcd_aworks_swap(lcd_t* lcd) {
   mem->online_fb = next_online_fb;
 
   aw_cache_flush(next_online_fb, aworks_get_fb_size()); // max 2ms wait
-  aw_emwin_fb_vram_addr_set(aworks_get_fb(), next_online_fb); // max 13ms wait, 等待垂直同步并交换fb
+  aw_emwin_fb_vram_addr_set(aworks_get_fb(), (uintptr_t)next_online_fb); // max 13ms wait, 等待垂直同步并交换fb
   return RET_OK;
 }
 

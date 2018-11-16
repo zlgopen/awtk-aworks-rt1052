@@ -27,7 +27,7 @@ struct _tk_mutex_t {
   AW_MUTEX_DECL(__lock);
 };
 
-static tk_mutex_t s_tk_mutex_null;
+//static tk_mutex_t s_tk_mutex_null;
 
 tk_mutex_t* tk_mutex_create() {
   tk_mutex_t* mutex = TKMEM_ZALLOC(tk_mutex_t);

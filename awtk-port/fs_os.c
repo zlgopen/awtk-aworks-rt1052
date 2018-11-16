@@ -223,7 +223,7 @@ static int32_t fs_os_get_file_size(fs_t* fs, const char* name) {
   return st.st_size;
 }
 
-static ret_t fs_os_get_disk_info(fs_t* fs, int32_t* free_kb, int32_t* total_kb) {
+static ret_t fs_os_get_disk_info(fs_t* fs, const char* volume, int32_t* free_kb, int32_t* total_kb) {
 	(void)fs;
 	assert(free_kb && total_kb);
 	assert(!"fs_os_get_disk_info not supported yet");
