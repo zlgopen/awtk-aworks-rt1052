@@ -43,8 +43,11 @@ static aw_ts_id ts_app_init(void) {
   return_value_if_fail(sys_ts != NULL, NULL);
   
 #if defined(AW_DEV_BU21029MUV) || defined(AW_DEV_IMX1050_TS)
-  // 电阻触摸屏需要读取校准数据, 电容屏无需读校准数据
+  /* 电阻触摸屏需要读取校准数据, 电容屏无需读校准数据 */
   return_value_if_fail(aw_ts_calc_data_read(sys_ts) == AW_OK, NULL);
+#else
+  /* 电容屏需要进行XY转换 */
+  aw_ts_set_orientation(sys_ts, AW_TS_SWAP_XY);
 #endif
 
   return sys_ts;
