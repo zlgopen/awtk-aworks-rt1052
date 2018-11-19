@@ -33,14 +33,19 @@ static aw_ts_id ts_app_init(void) {
 	char TS_SERVER_ID[] = "480x272";
 #elif defined(AW_DEV_HW800480F)
 	char TS_SERVER_ID[] = "800x480";
+#elif defined(AW_DEV_HWCAP480272F)
+	char TS_SERVER_ID[] = "480x272";
 #else
 //"not supported"
 #endif
 
   aw_ts_id sys_ts = aw_ts_serv_id_get(TS_SERVER_ID, 0, 0);
-
   return_value_if_fail(sys_ts != NULL, NULL);
+  
+#if defined(AW_DEV_BU21029MUV) || defined(AW_DEV_IMX1050_TS)
+  // 电阻触摸屏需要读取校准数据, 电容屏无需读校准数据
   return_value_if_fail(aw_ts_calc_data_read(sys_ts) == AW_OK, NULL);
+#endif
 
   return sys_ts;
 }
