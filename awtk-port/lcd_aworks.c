@@ -52,6 +52,10 @@ int aworks_get_fb_size() {
 }
 
 aw_emwin_fb_info_t* aworks_lcd_init(void) {
+#ifdef WITH_PXP_G2D
+  awbl_imx1050_pxp_init();
+#endif
+
   int fb_size = 0;
   s_awtk_fb = aw_emwin_fb_open("imx1050_emwin_fb", 0);
   return_value_if_fail(s_awtk_fb != NULL, NULL);
