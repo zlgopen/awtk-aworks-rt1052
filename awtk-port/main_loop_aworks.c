@@ -137,15 +137,13 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
       (uint8_t*) aworks_get_offline_fb());
 
   if (lcd != NULL) {
-#if 0
-    // 改进flush机制, 每次flush后加入cache_flush
+    // 改进flush机制, 每次flush后加入cache_flush (旋转屏幕方向后进入flush流程)
     s_lcd_flush_default = lcd->flush;
     lcd->flush = lcd_aworks_fb_flush;
-#else
-    // 使用swap机制
+
+    // 使用swap机制(正常屏幕方向进入swap流程)
     lcd->begin_frame = lcd_aworks_begin_frame;
     lcd->swap = lcd_aworks_swap;
-#endif
   }
 
   return lcd;
