@@ -67,6 +67,7 @@ else:
 
 copyAwtkFiles('src/misc', 'awtk/src/misc')
 copyAwtkFiles('src/xml', 'awtk/src/xml')
+copyAwtkFiles('src/svg', 'awtk/src/svg')
 copyAwtkFiles('src/base', 'awtk/src/base')
 copyAwtkFiles('src/font_loader', 'awtk/src/font_loader')
 copyAwtkFiles('src/blend', 'awtk/src/blend')
