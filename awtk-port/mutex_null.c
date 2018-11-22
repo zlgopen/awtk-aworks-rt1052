@@ -20,7 +20,7 @@
  */
 
 #include "aw_sem.h"
-#include "base/mem.h"
+#include "aw_mem.h"
 #include "base/mutex.h"
 
 struct _tk_mutex_t {
@@ -30,7 +30,7 @@ struct _tk_mutex_t {
 //static tk_mutex_t s_tk_mutex_null;
 
 tk_mutex_t* tk_mutex_create() {
-  tk_mutex_t* mutex = TKMEM_ZALLOC(tk_mutex_t);
+  tk_mutex_t* mutex = (tk_mutex_t*)aw_mem_alloc(sizeof(tk_mutex_t));
   if (mutex) {
   	AW_MUTEX_INIT(mutex->__lock, AW_SEM_INVERSION_SAFE);
   }
@@ -61,6 +61,6 @@ ret_t tk_mutex_destroy(tk_mutex_t* mutex) {
 	assert(mutex);
 	AW_MUTEX_TERMINATE( mutex->__lock );
 
-	TKMEM_FREE(mutex);
+	aw_mem_free(mutex);
   return RET_OK;
 }
