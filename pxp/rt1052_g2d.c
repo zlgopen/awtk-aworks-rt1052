@@ -357,6 +357,7 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
 
 
 
+
 ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation_t o)
 {
     assert(src->x >= 0);
@@ -364,7 +365,6 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
     assert(src->w >= 0);
     assert(src->h >= 0);
 
-    //todo:暂时不支持
     //return RET_NOT_IMPL;
 
     return_value_if_fail(o == LCD_ORIENTATION_90, RET_NOT_IMPL);
@@ -382,9 +382,9 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
     uint32_t ps_addr  = 0;
     uint32_t out_addr = 0;
 
-    wh_t ps_x = 0;
-    wh_t ps_y = 0;
-    wh_t ps_w = 0;
+    int32_t ps_x = 0;
+    int32_t ps_y = 0;
+    int32_t ps_w = 0;
 
     pxp_output_buffer_config_t pxp_output_config = {0};
     pxp_ps_buffer_config_t     ps_buffer_config = {0};
@@ -417,13 +417,7 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
        diff = 8 - re;
        tmp += diff;
        if (src->y + tmp > img->h) {
-           tmp = src->y - diff;
-           if (tmp >= 0) {
-               src->y = tmp;
-               src->h += diff;
-           } else {
-               return RET_NOT_IMPL;  /* 返回，使用软件旋转 */
-           }
+           return RET_NOT_IMPL;  /* 返回，使用软件旋转 */
        } else {
            src->h = tmp;
        }
@@ -434,18 +428,14 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
         diff = 8 - re;
         tmp  += diff;
         if (src->x + tmp > img->w) {
-           tmp =  src->x - diff;
-           if (tmp >= 0) {
-               src->x = tmp;
-               src->w += diff;
-           } else {
-               return RET_NOT_IMPL;  /* 返回，使用软件旋转 */
-           }
+           return RET_NOT_IMPL;  /* 返回，使用软件旋转 */
        } else {
            src->w = tmp;
        }
     }
-    uint16_t targ_x, targ_y;
+
+    int32_t targ_x, targ_y;
+
     targ_x = src->y;
     targ_y = fb->h - src->x - src->w;
 
