@@ -75,6 +75,7 @@ copyAwtkFiles('src/ui_loader', 'awtk/src/ui_loader')
 copyAwtkFiles('src/image_loader', 'awtk/src/image_loader')
 copyAwtkFiles('src/ext_widgets', 'awtk/src/ext_widgets')
 copyAwtkFiles('src/widget_animators', 'awtk/src/widget_animators')
+copyAwtkFiles('src/clip_board', 'awtk/src/clip_board')
 
 copyAwtkFile('src/awtk.c', 'awtk/src/awtk.c')
 copyAwtkFile('src/awtk.h', 'awtk/src/awtk.h')
