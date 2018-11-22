@@ -33,11 +33,11 @@
 
 static aw_ts_id ts_app_init(void) {
 #if defined(AW_DEV_HW480272F)
-	char TS_SERVER_ID[] = "480x272";
+  char TS_SERVER_ID[] = "480x272";
 #elif defined(AW_DEV_HW800480F)
-	char TS_SERVER_ID[] = "800x480";
+  char TS_SERVER_ID[] = "800x480";
 #elif defined(AW_DEV_HWCAP480272F)
-	char TS_SERVER_ID[] = "480x272";
+  char TS_SERVER_ID[] = "480x272";
 #else
 //"not supported"
 #endif
@@ -159,6 +159,7 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
 static uint32_t* s_current_vram = NULL;
 static uint32_t* s_fblist_readys = NULL;
 static uint32_t* s_fblist_frees = NULL;
+static uint8_t** s_dirty_offline = NULL;  // 指向mem->offline_fb, 代表当前offline缓冲是否已经被写脏
 
 static uint32_t* aworks_fblist_pop_ready() {
   uint32_t* fb = s_fblist_readys;
@@ -167,8 +168,8 @@ static uint32_t* aworks_fblist_pop_ready() {
 }
 
 static void aworks_fblist_push_ready(uint32_t* fb) {
-	assert(s_fblist_readys == NULL);
-	s_fblist_readys = fb;
+  assert(s_fblist_readys == NULL);
+  s_fblist_readys = fb;
 }
 
 static uint32_t* aworks_fblist_pop_free() {
@@ -178,38 +179,49 @@ static uint32_t* aworks_fblist_pop_free() {
 }
 
 static void aworks_fblist_push_free(uint32_t* fb) {
-	assert(s_fblist_frees == NULL);
-	s_fblist_frees = fb;
+  assert(s_fblist_frees == NULL);
+  s_fblist_frees = fb;
 }
 
 #define SWAP_STACK_SIZE 1 * 1024
 aw_local void __swap_task_entry(void *p_arg)
 {
-	while (1) {
-		uint32_t* ready = aworks_fblist_pop_ready();
-		if (ready) {
-			uint32_t* last_online = s_current_vram;
-			aw_emwin_fb_vram_addr_set(aworks_get_fb(), (uintptr_t)(s_current_vram = ready));
-			aworks_fblist_push_free(last_online);
-		} else {
-			aw_mdelay(2);
-		}
-	}
+  while (1) {
+    uint32_t* ready = aworks_fblist_pop_ready();
+    if (ready) {
+      uint32_t* last_online = s_current_vram;
+      aw_emwin_fb_vram_addr_set(aworks_get_fb(), (uintptr_t)(s_current_vram = ready));
+      aworks_fblist_push_free(last_online);
+
+      // 检查是否有脏的offline滞留, 如果有, 则强制更新到ready, 下一次循环把最新的帧刷新到online
+      // 并且将mem->offline_fb指向最新的free区域
+      // * 这里没有用锁, 是有一定的风险的, 但基于AWorks抢占式多任务的特性, 
+      // * 并且swap线程优先级比GUI线程高, 所以理论上不会切换到GUI线程, 操作s_dirty_offline是安全的
+      if (s_dirty_offline) {
+        aworks_fblist_push_ready((uint32_t*)*s_dirty_offline);
+        *s_dirty_offline = (uint8_t*)aworks_fblist_pop_free();
+        s_dirty_offline = NULL;
+      }
+    } else {
+      aw_mdelay(2);
+    }
+  }
 }
 
 static void aworks_fblist_init(uint32_t* frame_buffer, uint32_t* next_frame_buffer, int fb_size) {
-	assert(frame_buffer && next_frame_buffer);
+  assert(frame_buffer && next_frame_buffer);
   memset(next_frame_buffer, 0x00, fb_size);
 
   s_current_vram = frame_buffer;
-	s_fblist_frees = next_frame_buffer;
-	s_fblist_readys = NULL;
+  s_fblist_frees = next_frame_buffer;
+  s_fblist_readys = NULL;
+  s_dirty_offline = NULL;
 
   AW_TASK_DECL_STATIC(swap_task, SWAP_STACK_SIZE);
   AW_TASK_INIT(swap_task,      /* 任务实体 */
                "swap_task",   /* 任务名字 */
                1,             /* 任务优先级 */
-							 SWAP_STACK_SIZE, /* 任务堆栈大小 */
+               SWAP_STACK_SIZE, /* 任务堆栈大小 */
                __swap_task_entry,  /* 任务入口函数 */
                NULL);         /* 任务入口参数 */
   AW_TASK_STARTUP(swap_task); /* 启动任务 */
@@ -219,6 +231,7 @@ static ret_t lcd_aworks_begin_frame(lcd_t* lcd, rect_t* dirty_rect) {
   if (lcd_is_swappable(lcd)) {
     lcd_mem_t* mem = (lcd_mem_t*)lcd;
     (void)mem;
+    s_dirty_offline = NULL; // 新的一帧开始绘制
   }
   return RET_OK;
 }
@@ -228,21 +241,26 @@ static ret_t lcd_aworks_swap(lcd_t* lcd) {
 
   uint32_t* freefb = aworks_fblist_pop_free();
   if (freefb) {
-  	aw_cache_flush(mem->offline_fb, aworks_get_fb_size());
-  	aworks_fblist_push_ready((uint32_t*)mem->offline_fb);
+    aw_cache_flush(mem->offline_fb, aworks_get_fb_size());
+    aworks_fblist_push_ready((uint32_t*)mem->offline_fb);
 
-  	mem->offline_fb = (uint8_t*)freefb;
+    mem->offline_fb = (uint8_t*)freefb;
+  } else {
+    // 当前帧已经被更新到offline, 但由于没有可切换的free缓冲器(正在swap过程中)
+    // 所以当前offline没有被及时更新到ready区, 会导致最后一帧内容滞留在offline中
+    // 需要swap线程检测出来并强制将最新的offline放回ready, 保证最新的内容更新到online
+    // 
+    s_dirty_offline = &mem->offline_fb;
   }
   return RET_OK;
 }
 
 lcd_t* platform_create_lcd(wh_t w, wh_t h) {
-	aworks_fblist_init(aworks_get_online_fb(),
-			(uint32_t*) aw_mem_align(aworks_get_fb_size(), AW_CACHE_LINE_SIZE),
-			aworks_get_fb_size());
+  aworks_fblist_init(aworks_get_online_fb(), 
+  		(uint32_t*) aw_mem_align(aworks_get_fb_size(), AW_CACHE_LINE_SIZE), aworks_get_fb_size());
 
-	lcd_t* lcd = lcd_mem_bgr565_create_three_fb(w, h, (uint8_t*) aworks_get_online_fb(),
-			(uint8_t*) aworks_get_offline_fb(), NULL);
+  lcd_t* lcd = lcd_mem_bgr565_create_three_fb(w, h, (uint8_t*) aworks_get_online_fb(),
+  		(uint8_t*) aworks_get_offline_fb(), NULL);
 
   if (lcd != NULL) {
     // 改进flush机制, 每次flush后加入cache_flush (旋转屏幕方向后进入flush流程)
