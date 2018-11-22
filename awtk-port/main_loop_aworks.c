@@ -20,6 +20,9 @@
  */
 
 #include "aw_ts.h"
+#include "aw_task.h"
+#include "aw_delay.h"
+#include "aw_mem.h"
 #include "aw_cache.h"
 #include "aw_emwin_fb.h"
 #include "base/idle.h"
@@ -100,6 +103,8 @@ static ret_t lcd_aworks_fb_flush(lcd_t* lcd) {
   return RET_OK;
 }
 
+#ifndef WITH_THREE_FB
+
 static ret_t lcd_aworks_begin_frame(lcd_t* lcd, rect_t* dirty_rect) {
   if (lcd_is_swappable(lcd)) {
     lcd_mem_t* mem = (lcd_mem_t*)lcd;
@@ -148,5 +153,110 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
 
   return lcd;
 }
+
+#else // WITH_THREE_FB
+
+static uint32_t* s_current_vram = NULL;
+static uint32_t* s_fblist_readys = NULL;
+static uint32_t* s_fblist_frees = NULL;
+
+static uint32_t* aworks_fblist_pop_ready() {
+  uint32_t* fb = s_fblist_readys;
+  s_fblist_readys = NULL;
+  return fb;
+}
+
+static void aworks_fblist_push_ready(uint32_t* fb) {
+	assert(s_fblist_readys == NULL);
+	s_fblist_readys = fb;
+}
+
+static uint32_t* aworks_fblist_pop_free() {
+  uint32_t* fb = s_fblist_frees;
+  s_fblist_frees = NULL;
+  return fb;
+}
+
+static void aworks_fblist_push_free(uint32_t* fb) {
+	assert(s_fblist_frees == NULL);
+	s_fblist_frees = fb;
+}
+
+#define SWAP_STACK_SIZE 1 * 1024
+aw_local void __swap_task_entry(void *p_arg)
+{
+	while (1) {
+		uint32_t* ready = aworks_fblist_pop_ready();
+		if (ready) {
+			uint32_t* last_online = s_current_vram;
+			aw_emwin_fb_vram_addr_set(aworks_get_fb(), (uintptr_t)(s_current_vram = ready));
+			aworks_fblist_push_free(last_online);
+		} else {
+			aw_mdelay(2);
+		}
+	}
+}
+
+static void aworks_fblist_init(uint32_t* frame_buffer, uint32_t* next_frame_buffer, int fb_size) {
+	assert(frame_buffer && next_frame_buffer);
+  memset(next_frame_buffer, 0x00, fb_size);
+
+  s_current_vram = frame_buffer;
+	s_fblist_frees = next_frame_buffer;
+	s_fblist_readys = NULL;
+
+  AW_TASK_DECL_STATIC(swap_task, SWAP_STACK_SIZE);
+  AW_TASK_INIT(swap_task,      /* 任务实体 */
+               "swap_task",   /* 任务名字 */
+               1,             /* 任务优先级 */
+							 SWAP_STACK_SIZE, /* 任务堆栈大小 */
+               __swap_task_entry,  /* 任务入口函数 */
+               NULL);         /* 任务入口参数 */
+  AW_TASK_STARTUP(swap_task); /* 启动任务 */
+}
+
+static ret_t lcd_aworks_begin_frame(lcd_t* lcd, rect_t* dirty_rect) {
+  if (lcd_is_swappable(lcd)) {
+    lcd_mem_t* mem = (lcd_mem_t*)lcd;
+    (void)mem;
+  }
+  return RET_OK;
+}
+
+static ret_t lcd_aworks_swap(lcd_t* lcd) {
+  lcd_mem_t* mem = (lcd_mem_t*)lcd;
+
+  uint32_t* freefb = aworks_fblist_pop_free();
+  if (freefb) {
+  	aw_cache_flush(mem->offline_fb, aworks_get_fb_size());
+  	aworks_fblist_push_ready((uint32_t*)mem->offline_fb);
+
+  	mem->offline_fb = (uint8_t*)freefb;
+  }
+  return RET_OK;
+}
+
+lcd_t* platform_create_lcd(wh_t w, wh_t h) {
+	aworks_fblist_init(aworks_get_online_fb(),
+			(uint32_t*) aw_mem_align(aworks_get_fb_size(), AW_CACHE_LINE_SIZE),
+			aworks_get_fb_size());
+
+	lcd_t* lcd = lcd_mem_bgr565_create_three_fb(w, h, (uint8_t*) aworks_get_online_fb(),
+			(uint8_t*) aworks_get_offline_fb(), NULL);
+
+  if (lcd != NULL) {
+    // 改进flush机制, 每次flush后加入cache_flush (旋转屏幕方向后进入flush流程)
+    s_lcd_flush_default = lcd->flush;
+    lcd->flush = lcd_aworks_fb_flush;
+
+    // 使用swap机制(正常屏幕方向进入swap流程)
+    lcd->begin_frame = lcd_aworks_begin_frame;
+    lcd->swap = lcd_aworks_swap;
+  }
+
+  return lcd;
+}
+
+#endif // WITH_THREE_FB
 
 #include "main_loop/main_loop_raw.inc"
