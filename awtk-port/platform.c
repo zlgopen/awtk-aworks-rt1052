@@ -32,7 +32,7 @@ void sleep_ms(uint32_t ms) {
   aw_mdelay(ms);
 }
 
-#define TK_MEM_SIZE 4 * 1024 * 1024
+#define TK_MEM_SIZE 5 * 1024 * 1024
 
 ret_t platform_prepare(void) {
   uint32_t* mem = (uint32_t*) aw_mem_alloc(TK_MEM_SIZE);
