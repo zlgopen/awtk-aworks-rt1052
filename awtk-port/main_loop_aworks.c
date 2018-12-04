@@ -35,7 +35,7 @@ static aw_ts_id ts_app_init(void) {
 #if defined(AW_DEV_HW480272F)
   char TS_SERVER_ID[] = "480x272";
 #elif defined(AW_DEV_HW800480F)
-  char TS_SERVER_ID[] = "800x480";
+  char TS_SERVER_ID[] = "480x272";
 #elif defined(AW_DEV_HWCAP480272F)
   char TS_SERVER_ID[] = "480x272";
 #else
