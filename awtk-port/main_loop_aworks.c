@@ -31,6 +31,39 @@
 #include "lcd/lcd_mem_bgr565.h"
 #include "main_loop/main_loop_simple.h"
 
+#define TS_STACK_SIZE 1 * 1024
+static struct aw_ts_state s_ts_state = {0};
+
+aw_local void __ts_task_entry(void *p_arg)
+{
+  int tsret = 0;
+  struct aw_ts_state ts_state;
+
+  while (1) {
+    memset(&ts_state, 0x00, sizeof(ts_state));
+    tsret = aw_ts_exec(p_arg, &ts_state, 1);
+
+    if (tsret >= 0) {
+      s_ts_state = ts_state;
+    }
+    aw_mdelay(20);
+  }
+}
+
+static void ts_task_init(aw_ts_id sys_ts) {
+  /* 定义任务实体，分配栈空间大小为4096  */
+  AW_TASK_DECL_STATIC(ts_task, TS_STACK_SIZE);
+
+  AW_TASK_INIT(ts_task,      /* 任务实体 */
+               "ts_task",   /* 任务名字 */
+               4,             /* 任务优先级 */
+               TS_STACK_SIZE, /* 任务堆栈大小 */
+               __ts_task_entry,  /* 任务入口函数 */
+               sys_ts);         /* 任务入口参数 */
+
+  AW_TASK_STARTUP(ts_task); /* 启动任务 */
+}
+
 static aw_ts_id ts_app_init(void) {
 #if defined(AW_DEV_HW480272F)
   char TS_SERVER_ID[] = "480x272";
@@ -53,32 +86,24 @@ static aw_ts_id ts_app_init(void) {
   aw_ts_set_orientation(sys_ts, AW_TS_SWAP_XY);
 #endif
 
+  ts_task_init(sys_ts);
   return sys_ts;
 }
 
 ret_t platform_disaptch_input(main_loop_t* loop) {
-  int tsret = 0;
   static aw_ts_id ts_id = NULL;
-  struct aw_ts_state ts_state;
-
-  memset(&ts_state, 0x00, sizeof(ts_state));
   if (ts_id == NULL) {
     ts_id = ts_app_init();
   }
 
-  return_value_if_fail(ts_id != NULL, RET_FAIL);
-
-  tsret = aw_ts_exec(ts_id, &ts_state, 1);
-  if (tsret >= 0) {
-    if (ts_state.pressed) {
-      main_loop_post_pointer_event(loop, ts_state.pressed, ts_state.x,
-          ts_state.y);
-    } else {
-      main_loop_post_pointer_event(loop, ts_state.pressed, ts_state.x,
-          ts_state.y);
-    }
+  struct aw_ts_state ts_state = s_ts_state;
+  if (ts_state.pressed) {
+    main_loop_post_pointer_event(loop, ts_state.pressed, ts_state.x,
+        ts_state.y);
+  } else {
+    main_loop_post_pointer_event(loop, ts_state.pressed, ts_state.x,
+        ts_state.y);
   }
-
   return RET_OK;
 }
 
