@@ -31,9 +31,13 @@
 #include "lcd/lcd_mem_bgr565.h"
 #include "main_loop/main_loop_simple.h"
 
-#define TS_STACK_SIZE 1 * 1024
+/*----------------------------------------------------------------------------*/
+/* 触摸屏输入消息分派                                                         */
+/*----------------------------------------------------------------------------*/
+
 static struct aw_ts_state s_ts_state = {0};
 
+#define TS_STACK_SIZE 1 * 1024
 aw_local void __ts_task_entry(void *p_arg)
 {
   int tsret = 0;
@@ -107,6 +111,10 @@ ret_t platform_disaptch_input(main_loop_t* loop) {
   return RET_OK;
 }
 
+/*----------------------------------------------------------------------------*/
+/* frame buffer刷新操作                                                       */
+/*----------------------------------------------------------------------------*/
+
 extern uint32_t* aworks_get_online_fb(void);
 extern uint32_t* aworks_get_offline_fb(void);
 extern aw_emwin_fb_info_t* aworks_get_fb(void);
@@ -129,6 +137,10 @@ static ret_t lcd_aworks_fb_flush(lcd_t* lcd) {
 }
 
 #ifndef WITH_THREE_FB
+
+/*----------------------------------------------------------------------------*/
+/* 双缓冲模式                                                                 */
+/*----------------------------------------------------------------------------*/
 
 static ret_t lcd_aworks_begin_frame(lcd_t* lcd, rect_t* dirty_rect) {
   if (lcd_is_swappable(lcd)) {
@@ -180,6 +192,10 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
 }
 
 #else // WITH_THREE_FB
+
+/*----------------------------------------------------------------------------*/
+/* 三缓冲模式                                                                 */
+/*----------------------------------------------------------------------------*/
 
 static uint32_t* s_current_vram = NULL;
 static uint32_t* s_fblist_readys = NULL;
