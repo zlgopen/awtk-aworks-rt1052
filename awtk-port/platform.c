@@ -35,10 +35,11 @@ void sleep_ms(uint32_t ms) {
 #define TK_MEM_SIZE 6 * 1024 * 1024
 
 ret_t platform_prepare(void) {
+#ifndef HAS_STD_MALLOC
   uint32_t* mem = (uint32_t*) aw_mem_alloc(TK_MEM_SIZE);
   return_value_if_fail(mem != NULL, RET_OOM);
 
   tk_mem_init(mem, TK_MEM_SIZE);
-
+#endif
   return RET_OK;
 }

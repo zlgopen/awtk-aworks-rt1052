@@ -65,6 +65,12 @@
 #define HAS_FAST_MEMCPY 1
 
 /**
+ * 如果系统有标准的malloc函数，请定义本宏
+ *
+ */
+#define HAS_STD_MALLOC 1
+
+/**
  * 如果启用NXP PXP硬件加速，请定义本宏
  * 
  */
