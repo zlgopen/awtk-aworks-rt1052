@@ -31,12 +31,21 @@ static ret_t date_time_get_now_impl(date_time_t* dt) {
   time_t now = time(0);
   struct tm* t = localtime(&now);
 
-  dt->second = t->tm_sec;
-  dt->minute = t->tm_min;
-  dt->hour = t->tm_hour;
-  dt->day = t->tm_mday;
-  dt->month = t->tm_mon + 1;
-  dt->year = t->tm_year + 1900;
+  if (t) {
+    dt->second = t->tm_sec;
+    dt->minute = t->tm_min;
+    dt->hour = t->tm_hour;
+    dt->day = t->tm_mday;
+    dt->month = t->tm_mon + 1;
+    dt->year = t->tm_year + 1900;
+  } else {
+    dt->second = 0;
+    dt->minute = 0;
+    dt->hour = 0;
+    dt->day = 11;
+    dt->month = 11;
+    dt->year = 2018;
+  }
 
   return RET_OK;
 }
