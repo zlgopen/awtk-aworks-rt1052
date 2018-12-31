@@ -23,6 +23,23 @@
 #include "aw_delay.h"
 #include "base/mem.h"
 #include "base/timer.h"
+#include "base/date_time.h"
+
+#include <time.h>
+#include <sys/time.h>
+static ret_t date_time_get_now_impl(date_time_t* dt) {
+  time_t now = time(0);
+  struct tm* t = localtime(&now);
+
+  dt->second = t->tm_sec;
+  dt->minute = t->tm_min;
+  dt->hour = t->tm_hour;
+  dt->day = t->tm_mday;
+  dt->month = t->tm_mon + 1;
+  dt->year = t->tm_year + 1900;
+
+  return RET_OK;
+}
 
 uint32_t get_time_ms() {
   return aw_sys_tick_get();
@@ -41,5 +58,7 @@ ret_t platform_prepare(void) {
 
   tk_mem_init(mem, TK_MEM_SIZE);
 #endif
+
+  date_time_set_impl(date_time_get_now_impl);
   return RET_OK;
 }
