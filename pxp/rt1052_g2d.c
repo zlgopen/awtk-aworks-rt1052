@@ -151,6 +151,10 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
     return_value_if_fail(img->format == BITMAP_FMT_BGR565 || img->format == BITMAP_FMT_BGRA8888,
                          RET_BAD_PARAMS);
 
+    if (((src->w != dst->w) || (src->h != dst->h)) && (img->format == BITMAP_FMT_BGRA8888)) {
+        return RET_NOT_IMPL;    /* 硬件不支持BGRA8888数据的缩放 */
+    }
+
     uint16_t as_format   = 0;
     uint16_t as_pixsize  = 0;
     uint16_t ps_format   = 0;
