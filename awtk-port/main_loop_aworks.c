@@ -197,41 +197,51 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
 /* 三缓冲模式                                                                 */
 /*----------------------------------------------------------------------------*/
 
-static uint32_t* s_current_vram = NULL;
+AW_MUTEX_DECL(__lock_fblist);
 static uint32_t* s_fblist_readys = NULL;
 static uint32_t* s_fblist_frees = NULL;
 static uint8_t* s_dirty_offline = NULL;  // 指向mem->offline_fb, 代表当前offline缓冲是否已经被写脏
 
 static uint32_t* aworks_fblist_pop_ready() {
+  AW_MUTEX_LOCK( __lock_fblist, AW_SEM_WAIT_FOREVER );
   uint32_t* fb = s_fblist_readys;
   s_fblist_readys = NULL;
+  AW_MUTEX_UNLOCK(__lock_fblist);
   return fb;
 }
 
 static void aworks_fblist_push_ready(uint32_t* fb) {
+  AW_MUTEX_LOCK( __lock_fblist, AW_SEM_WAIT_FOREVER );
   assert(s_fblist_readys == NULL);
   s_fblist_readys = fb;
+  AW_MUTEX_UNLOCK(__lock_fblist);
 }
 
 static uint32_t* aworks_fblist_pop_free() {
+  AW_MUTEX_LOCK( __lock_fblist, AW_SEM_WAIT_FOREVER );
   uint32_t* fb = s_fblist_frees;
   s_fblist_frees = NULL;
+  AW_MUTEX_UNLOCK(__lock_fblist);
   return fb;
 }
 
 static void aworks_fblist_push_free(uint32_t* fb) {
+  AW_MUTEX_LOCK( __lock_fblist, AW_SEM_WAIT_FOREVER );
   assert(s_fblist_frees == NULL);
   s_fblist_frees = fb;
+  AW_MUTEX_UNLOCK(__lock_fblist);
 }
 
 #define SWAP_STACK_SIZE 1 * 1024
 aw_local void __swap_task_entry(void *p_arg)
 {
+  uint32_t* current_vram = (uint32_t*)p_arg;
+
   while (1) {
     uint32_t* ready = aworks_fblist_pop_ready();
     if (ready) {
-      uint32_t* last_online = s_current_vram;
-      aw_emwin_fb_vram_addr_set(aworks_get_fb(), (uintptr_t)(s_current_vram = ready));
+      uint32_t* last_online = current_vram;
+      aw_emwin_fb_vram_addr_set(aworks_get_fb(), (uintptr_t)(current_vram = ready));
       aworks_fblist_push_free(last_online);
     } else {
       aw_mdelay(2);
@@ -266,7 +276,7 @@ static void aworks_fblist_init(lcd_t* lcd) {
   assert(frame_buffer && next_frame_buffer);
   memset(next_frame_buffer, 0x00, fb_size);
 
-  s_current_vram = frame_buffer;
+  AW_MUTEX_INIT(__lock_fblist, AW_SEM_INVERSION_SAFE);
   s_fblist_frees = next_frame_buffer;
   s_fblist_readys = NULL;
   s_dirty_offline = NULL;
@@ -277,7 +287,7 @@ static void aworks_fblist_init(lcd_t* lcd) {
                1,             /* 任务优先级 */
                SWAP_STACK_SIZE, /* 任务堆栈大小 */
                __swap_task_entry,  /* 任务入口函数 */
-               NULL);         /* 任务入口参数 */
+               frame_buffer);         /* 任务入口参数 */
   AW_TASK_STARTUP(swap_task); /* 启动任务 */
 
   // 创建idle任务(同gui线程), 检查是否有滞留的脏offline缓冲, 并刷新到online
