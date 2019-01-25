@@ -120,3 +120,11 @@ MEMORY
 | g2d_blend_image  | 部分支持 | 不支持带透明通道的位图进行“缩放”贴图 |
 | g2d_rotate_image | 支持     |                                      |
 
+4、关于awtk_config.h的常用配置
+
+| 宏               | 说明                                                         |
+| ---------------- | ------------------------------------------------------------ |
+| WITH_PXP_G2D     | 开启2D加速，可以加快贴图速度                                 |
+| WITH_THREE_FB    | 开启三缓冲机制，提高刷新帧率，但如果使用 tk_set_lcd_orientation 旋转屏幕，则应该注释该行，使用默认的双缓冲机制 |
+| WITH_NANOVG_AGGE | 使用 AGGE 作为渲染后端，要使用 AGG 则可以改为 WITH_NANOVG_AGG |
+
