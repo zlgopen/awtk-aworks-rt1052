@@ -9,9 +9,9 @@ import platform
 
 # XXX: make sure no no ascii chars in the path name.
 
-AWTK_ROOT_DIR = 'E:/zlgopen/awtk';
+AWTK_ROOT_DIR = '../awtk';
 PORT_ROOT_DIR = os.getcwd();
-DST_ROOT_DIR = 'E:/zlgopen/awtk-aworks-rt1052/output';
+DST_ROOT_DIR = './output';
 NANOVG_BACKEND = 'AGGE'
 
 
