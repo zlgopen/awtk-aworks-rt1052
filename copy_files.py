@@ -78,6 +78,8 @@ copyAwtkFiles('src/ui_loader', 'awtk/src/ui_loader')
 copyAwtkFiles('src/image_loader', 'awtk/src/image_loader')
 copyAwtkFiles('src/ext_widgets', 'awtk/src/ext_widgets')
 copyAwtkFiles('src/widget_animators', 'awtk/src/widget_animators')
+copyAwtkFiles('src/window_animators', 'awtk/src/window_animators')
+copyAwtkFiles('src/dialog_highlighters', 'awtk/src/dialog_highlighters')
 copyAwtkFiles('src/clip_board', 'awtk/src/clip_board')
 
 copyAwtkFile('src/awtk_global.c', 'awtk/src/awtk_global.c')
@@ -120,19 +122,6 @@ MAIN_LOOP_FILES=['main_loop_simple.h',
 for f in MAIN_LOOP_FILES:
     sfilename=os.path.join('src/main_loop', f);
     dfilename=os.path.join('awtk/src/main_loop', f);
-    copyAwtkFile(sfilename, dfilename)
-
-WINDOW_ANIMATORS_FILES=['bottom_to_top.inc',
-    'top_to_bottom.inc',
-    'center_scale.inc',
-    'vtranslate.inc',
-    'common.inc',
-    'window_animator_fb.c',
-    'fade.inc',
-    'htranslate.inc']
-for f in WINDOW_ANIMATORS_FILES:
-    sfilename=os.path.join('src/window_animators', f);
-    dfilename=os.path.join('awtk/src/window_animators', f);
     copyAwtkFile(sfilename, dfilename)
 
 
