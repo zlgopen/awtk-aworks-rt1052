@@ -20,6 +20,7 @@
  */
 
 #include "aw_ts.h"
+#include "aw_sem.h"
 #include "aw_task.h"
 #include "aw_delay.h"
 #include "aw_mem.h"
@@ -69,14 +70,11 @@ static void ts_task_init(aw_ts_id sys_ts) {
 }
 
 static aw_ts_id ts_app_init(void) {
-#if defined(AW_DEV_HW480272F)
-  char TS_SERVER_ID[] = "480x272";
-#elif defined(AW_DEV_HW800480F)
-  char TS_SERVER_ID[] = "480x272";
-#elif defined(AW_DEV_HWCAP480272F)
-  char TS_SERVER_ID[] = "480x272";
+// add SYS_TS_ID check for compatible with aworks sdk v1.0.5 and v1.0.4
+#ifdef SYS_TS_ID
+  char TS_SERVER_ID[] = SYS_TS_ID;
 #else
-//"not supported"
+  char TS_SERVER_ID[] = "480x272";
 #endif
 
   aw_ts_id sys_ts = aw_ts_serv_id_get(TS_SERVER_ID, 0, 0);

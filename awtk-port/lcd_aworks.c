@@ -53,7 +53,10 @@ int aworks_get_fb_size() {
 
 aw_emwin_fb_info_t* aworks_lcd_init(void) {
 #ifdef WITH_PXP_G2D
+// add AW_DEV_IMX1050_PXP check for compatible with aworks sdk v1.0.5 and v1.0.4
+#ifndef AW_DEV_IMX1050_PXP
   awbl_imx1050_pxp_init();
+#endif
 #endif
 
   int fb_size = 0;
