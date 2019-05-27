@@ -70,7 +70,6 @@ python copy_files.py
    "${workspace_loc:/${ProjName}/awtk/src/ext_widgets}"
    "${workspace_loc:/${ProjName}/awtk/3rd}"
    "${workspace_loc:/${ProjName}/awtk/3rd/agge}"
-   "${workspace_loc:/${ProjName}/awtk/3rd/agg/include}"
    "${workspace_loc:/${ProjName}/awtk/3rd/nanovg}"
    "${workspace_loc:/${ProjName}/awtk/3rd/nanovg/base}"
    "${workspace_loc:/${ProjName}/awtk/3rd/gpinyin/include}"
