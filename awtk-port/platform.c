@@ -25,6 +25,38 @@
 #include "tkc/mem.h"
 #include "tkc/date_time.h"
 
+#if 1
+// for compatible with ellipse(gcc) and keil(armcc)
+
+#include "aw_time.h"
+static ret_t date_time_get_now_impl(date_time_t* dt) {
+  
+	aw_err_t ret;
+	aw_tm_t t;
+  
+	ret = aw_tm_get(&t);
+
+  if (ret == AW_OK) {
+    dt->second = t.tm_sec;
+    dt->minute = t.tm_min;
+    dt->hour = t.tm_hour;
+    dt->day = t.tm_mday;
+    dt->month = t.tm_mon + 1;
+    dt->year = t.tm_year + 1900;
+  } else {
+    dt->second = 0;
+    dt->minute = 0;
+    dt->hour = 0;
+    dt->day = 11;
+    dt->month = 11;
+    dt->year = 2018;
+  }
+
+  return RET_OK;
+}
+#else
+// only for ellipse(gcc)
+
 #include <time.h>
 #include <sys/time.h>
 static ret_t date_time_get_now_impl(date_time_t* dt) {
@@ -49,6 +81,7 @@ static ret_t date_time_get_now_impl(date_time_t* dt) {
 
   return RET_OK;
 }
+#endif
 
 uint32_t get_time_ms() {
   return aw_sys_tick_get();
