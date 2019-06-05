@@ -31,10 +31,10 @@
 #include "aw_time.h"
 static ret_t date_time_get_now_impl(date_time_t* dt) {
   
-	aw_err_t ret;
-	aw_tm_t t;
+  aw_err_t ret;
+  aw_tm_t t;
   
-	ret = aw_tm_get(&t);
+  ret = aw_tm_get(&t);
 
   if (ret == AW_OK) {
     dt->second = t.tm_sec;
