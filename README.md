@@ -11,76 +11,70 @@
 ```
 cd E:\zlgopen
 git clone https://github.com/zlgopen/awtk.git
+git clone https://github.com/zlgopen/awtk-aworks-rt1052.git
 ```
 
 #### 1.2 修改 copy\_files.py
 
-  主要有如下3项：
+主要有如下3项，通常无需修改，按默认设置即可：
 
-- 设置AWTK_ROOT_DIR（即AWTK根目录）；
-
-  ```
-  AWTK_ROOT_DIR = 'E:/zlgopen/awtk';
-  ```
-
-
-- 设置DST_ROOT_DIR（即输出目录）。一般该目录为AWorks工程目录（即.project文件的目录）
-
-  ```
-  DST_ROOT_DIR = 'E:/zlgopen/awtk-aworks-rt1052/output';
-  ```
-
-  注意路径中不能包含中文字符。
-
-- 设置NANOVG_BACKEND（即nanovg后端类型），目前有AGG、AGGE两种选项。
-
-  ```
-  NANOVG_BACKEND = 'AGGE'
-  ```
+```
+AWTK_ROOT_DIR = '../awtk';
+DST_ROOT_DIR = './output';
+NANOVG_BACKEND = 'AGGE'
+```
 
 #### 1.3 执行 copy\_files.py
 
+输出编译AWorks工程需要用的源文件，默认输出到 output 文件夹
+
 ```
+cd E:\zlgopen\awtk-aworks-rt1052
 python copy_files.py
 ```
 
-  注意脚本目前只适配了Python2。
+完成后将 output 文件夹内的所有文件拷贝到 Eclipse 工程目录
 
-#### 1.4 添加预定义宏 HAS\_AWTK\_CONFIG
+#### 1.4 添加预定义宏
 
-1. 进入eclipse, 导入并选中AWorks工程，在如下两个地方添加宏：
+进入 Eclipse，导入并选中 AWorks 工程，在如下两个地方添加宏：
 
-   - "Project"菜单项 -> "C/C++ Build" -> "Settings" -> "Tool Settings"标签页 -> "Cross ARM C Compiler" -> "Preprocessor"；
+```
+HAS_AWTK_CONFIG
+```
 
-   - "Project"菜单项 -> "C/C++ Build" -> "Settings" -> "Tool Settings"标签页 -> "Cross ARM C++ Compiler" -> "Preprocessor"
+"Project"菜单项 -> "C/C++ Build" -> "Settings" -> "Tool Settings"标签页 -> 
+
+- "Cross ARM C Compiler" -> "Preprocessor"
+
+- "Cross ARM C++ Compiler" -> "Preprocessor"
 
 
 #### 1.5 添加 AWTK 相关的头文件路径
 
-1. 进入eclipse, 导入并选中AWorks工程，在如下两个地方添加路径：
+进入eclipse, 导入并选中AWorks工程，在如下两个地方添加路径：
 
-   - "Project"菜单项 -> "C/C++ Build" -> "Settings" -> "Tool Settings"标签页 -> "Cross ARM C Compiler" -> "Includes"；
+```
+"${workspace_loc:/${ProjName}/awtk/src}"
+"${workspace_loc:/${ProjName}/awtk/src/ext_widgets}"
+"${workspace_loc:/${ProjName}/awtk/3rd}"
+"${workspace_loc:/${ProjName}/awtk/3rd/agge}"
+"${workspace_loc:/${ProjName}/awtk/3rd/nanovg}"
+"${workspace_loc:/${ProjName}/awtk/3rd/nanovg/base}"
+"${workspace_loc:/${ProjName}/awtk/3rd/gpinyin/include}"
+"${workspace_loc:/${ProjName}/awtk/3rd/libunibreak}"
+"${workspace_loc:/${ProjName}/awtk-port}"
+```
 
-   - "Project"菜单项 -> "C/C++ Build" -> "Settings" -> "Tool Settings"标签页 -> "Cross ARM C++ Compiler" -> "Includes"
+"Project"菜单项 -> "C/C++ Build" -> "Settings" -> "Tool Settings"标签页 -> 
 
-   AWTK相关的包含路径如下：
+- "Cross ARM C Compiler" -> "Includes"
 
-   ```
-   "${workspace_loc:/${ProjName}/awtk/src}"
-   "${workspace_loc:/${ProjName}/awtk/src/ext_widgets}"
-   "${workspace_loc:/${ProjName}/awtk/3rd}"
-   "${workspace_loc:/${ProjName}/awtk/3rd/agge}"
-   "${workspace_loc:/${ProjName}/awtk/3rd/nanovg}"
-   "${workspace_loc:/${ProjName}/awtk/3rd/nanovg/base}"
-   "${workspace_loc:/${ProjName}/awtk/3rd/gpinyin/include}"
-   "${workspace_loc:/${ProjName}/awtk/3rd/libunibreak}"
-   "${workspace_loc:/${ProjName}/awtk-port}"
-   ```
-
+- "Cross ARM C++ Compiler" -> "Includes"
 
 ## 二、注意事项
 
-1、awtk-port/platfrom.c中的 TK_MEM_SIZE 须小于 AWorks 工程的 *.ld 文件中定义的 heap 大小。比如 rt1050_sdram.ld 中定义了 heap 为11M，则 TK_MEM_SIZE 须小于11M。
+1、Eclipse 工程的 rt1050_sdram.ld 有以下两种配置，根据工程需要选择
 
 **code = 4M的配置**
 
@@ -108,18 +102,7 @@ MEMORY
 }
 ```
 
-2、AWorks工程的*.ld文件切忌随意修改，这可能会导致内存读写异常（比如读写速度严重变慢）。
-
-3、关于Pxp硬件加速
-
-| 函数             | 是否支持 | 备注                                 |
-| ---------------- | -------- | ------------------------------------ |
-| g2d_fill_rect    | 不支持   | 比直接memcpy慢                       |
-| g2d_copy_image   | 不支持   | 比直接memcpy慢                       |
-| g2d_blend_image  | 部分支持 | 不支持带透明通道的位图进行“缩放”贴图 |
-| g2d_rotate_image | 支持     |                                      |
-
-4、关于awtk_config.h的常用配置
+2、关于awtk_config.h的常用配置
 
 | 宏               | 说明                                                         |
 | ---------------- | ------------------------------------------------------------ |
@@ -134,42 +117,6 @@ AWorks 默认提供的环境是 Eclipse，如果需要在 Keil 环境下使用 A
 
 1. 请在 C/C++ -> Misc Controls 中加上 **--gnu** 标志 
 
-2. 如果使用了 **Use MicroLib**，可能需要用户自己定义下列函数，避免链接失败
-
-   ```c
-   void __aeabi_assert ( int e, const char *str1, const char *str2 ) {
-   }
-   
-   size_t wcslen ( const wchar_t * wcs ) {
-     const wchar_t *eos = wcs;
-     while( *eos++ ) ;
-     return( (size_t)(eos - wcs - 1) );
-   }
-   
-   wchar_t * wcschr ( const wchar_t * string, wchar_t ch ) {
-     while (*string && *string != (wchar_t)ch)
-       string++;
-     if (*string == (wchar_t)ch)
-       return((wchar_t *)string);
-     return(NULL);
-   }
-   
-   int wcscmp ( const wchar_t * src, const wchar_t * dst ) {
-     int ret = 0 ;
-     while( ! (ret = (int)(*src - *dst)) && *dst)
-       ++src, ++dst;
-     if ( ret < 0 )
-       ret = -1 ;
-     else if ( ret > 0 )
-       ret = 1 ;
-     return( ret );
-   }
-   
-   wchar_t * wcscpy ( wchar_t * dst, const wchar_t * src ) {
-     wchar_t * cp = dst;
-     while( *cp++ = *src++ ) ;
-     return( dst );
-   }
-   ```
+2. 禁用 **Use MicroLib**
 
    
