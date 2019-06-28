@@ -51,7 +51,7 @@ aw_local void __ts_task_entry(void *p_arg)
     if (tsret >= 0) {
       s_ts_state = ts_state;
     }
-    aw_mdelay(20);
+    aw_mdelay(10);
   }
 }
 
@@ -84,8 +84,8 @@ static aw_ts_id ts_app_init(void) {
   /* 电阻触摸屏需要读取校准数据, 电容屏无需读校准数据 */
   return_value_if_fail(aw_ts_calc_data_read(sys_ts) == AW_OK, NULL);
 #else
-  /* 电容屏需要进行XY转换 */
-  aw_ts_set_orientation(sys_ts, AW_TS_SWAP_XY);
+  /* 电容屏需要进行XY转换（由touch_calibration.c: ts_init调用） */
+  //aw_ts_set_orientation(sys_ts, AW_TS_SWAP_XY);
 #endif
 
   ts_task_init(sys_ts);
