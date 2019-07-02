@@ -38,7 +38,7 @@
 
 static struct aw_ts_state s_ts_state = {0};
 
-#define TS_STACK_SIZE 1 * 1024
+#define TS_STACK_SIZE 2 * 1024
 aw_local void __ts_task_entry(void *p_arg)
 {
   int tsret = 0;
