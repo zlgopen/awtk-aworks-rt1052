@@ -47,7 +47,7 @@ python copy_files.py
 python build_lib.py
 ```
 
-完成后，会在 output/lib 文件夹下生成相应的库文件，并且会删除 output/awtk 文件夹下的所有 C/C++ 源文件。如果执行失败，可能需要修改 build_lib.py 编译器路径。
+完成后，会在 output/lib 文件夹下生成相应的库文件。如果执行失败，可能需要修改 build_lib.py 编译器路径。
 
 #### 1.4 添加预定义宏
 

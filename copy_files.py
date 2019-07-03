@@ -140,5 +140,5 @@ for f in DEMO_FILES:
 
 
 copyPortFiles('awtk-port', 'awtk-port')
-copyPortFiles('pxp', 'pxp')
+# copyPortFiles('pxp', 'pxp')
 # copyPortFile('user_code/main.c', 'awtk-demos/main.c')	

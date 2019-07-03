@@ -13,15 +13,6 @@ AWTK_GCC_LIB_NAME = 'libawtk.a'
 AWTK_ARMCC_LIB_NAME = 'awtk.lib'
 OUTPUT = './output/lib'
 
-def get_source_file(path,list):
-  files = os.listdir(path)
-  for file in files:
-    f = os.path.join(path,file)
-    if os.path.isfile(f):
-      if not (file.endswith('.h')or file.endswith('.inc')):
-		list.append(f)
-    if os.path.isdir(f):
-      get_source_file(f,list) 
 
 def main():
     if os.path.exists(OUTPUT):
@@ -65,15 +56,6 @@ def main():
     else:
         sys.exit(1)
 
-    remove_source_file()
-
-def remove_source_file():
-    all_file =[]
-    get_source_file(AWTK_ROOT,all_file)
-
-    for f in all_file:
-        print 'remove file' + f
-        os.remove(f)
 
 
 if __name__ == "__main__":

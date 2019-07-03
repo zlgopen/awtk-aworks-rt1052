@@ -112,7 +112,8 @@ def mergelib_function(target, source, env):
     if len(target) != 1 :
         error_exit(u"target must be only one")
     target = str(target[0]);
-    target = os.path.abspath(target);
+    # delete abspath to avoid abspath include + char, result in ar cmd syntax error
+    #target = os.path.abspath(target);
 
     ar_flags_list = windows_cmd_str_to_cmd_list(env['RANLIBFLAGS'])
 
