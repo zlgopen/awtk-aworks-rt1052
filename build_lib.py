@@ -9,8 +9,8 @@ AWTK_ROOT = './output/awtk'
 
 
 
-AWTK_GCC_LIB_NAME = 'libawtk.a'
-AWTK_ARMCC_LIB_NAME = 'awtk.lib'
+AWTK_GCC_LIB_NAME = 'libawtk_imx1050.a'
+AWTK_ARMCC_LIB_NAME = 'awtk_imx1050.lib'
 OUTPUT = './output/lib'
 
 
@@ -25,7 +25,7 @@ def main():
     scons_gcc_cmd = []
     scons_gcc_cmd.append('scons.bat')
     scons_gcc_cmd.append('COMPILER_TOOLS=gcc')
-    scons_gcc_cmd.append('AWTK_LIB_NAME=libawtk.a')
+    scons_gcc_cmd.append('AWTK_LIB_NAME=' + AWTK_GCC_LIB_NAME)
     
     p_gcc = subprocess.Popen(scons_gcc_cmd)
     p_gcc.wait()
@@ -43,7 +43,7 @@ def main():
     scons_armcc_cmd = []
     scons_armcc_cmd.append('scons.bat')
     scons_armcc_cmd.append('COMPILER_TOOLS=armcc')
-    scons_armcc_cmd.append('AWTK_LIB_NAME=awtk.lib')
+    scons_armcc_cmd.append('AWTK_LIB_NAME=' + AWTK_ARMCC_LIB_NAME)
     
     p_armcc = subprocess.Popen(scons_armcc_cmd)
     p_armcc.wait()
