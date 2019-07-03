@@ -24,7 +24,9 @@ DST_ROOT_DIR = './output';
 NANOVG_BACKEND = 'AGGE'
 ```
 
-#### 1.3 执行 copy\_files.py
+#### 1.3 生成源文件或 lib
+
+##### 1.3.1 执行 copy\_files.py
 
 输出编译AWorks工程需要用的源文件，默认输出到 output 文件夹
 
@@ -34,6 +36,18 @@ python copy_files.py
 ```
 
 完成后将 output 文件夹内的所有文件拷贝到 Eclipse 工程目录
+
+##### 1.3.1 执行 build_lib.py（可选）
+
+如果工程中需要以源码的方式引用 AWTK，执行完 1.3.1 步骤即可，但这种方式在每次修改工程时，会浪费大量时间在编译 AWTK 源码上面。因此可以使用预编译好 lib 的方式：
+
+```
+cd E:\zlgopen\awtk-aworks-rt1052
+python copy_files.py
+python build_lib.py
+```
+
+完成后，会在 output/lib 文件夹下生成相应的库文件，并且会删除 output/awtk 文件夹下的所有 C/C++ 源文件。如果执行失败，可能需要修改 build_lib.py 编译器路径。
 
 #### 1.4 添加预定义宏
 
