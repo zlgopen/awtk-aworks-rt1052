@@ -23,6 +23,10 @@ wchar_t* wcsdup(const wchar_t* s) {
   return wcs_dup(s);
 }
 
+int iswspace(wint_t wc) {
+  return isspace(wc);
+}
+
 time_t time(time_t* t) {
   return time_now_s();
 }
