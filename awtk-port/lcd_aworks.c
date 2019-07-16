@@ -20,7 +20,7 @@
  */
 
 #include "aworks.h"
-#include "aw_emwin_fb.h"
+#include "aw_fb.h"
 #include "aw_sem.h"
 #include "aw_cache.h"
 #include "aw_mem.h"
@@ -32,7 +32,7 @@
 
 static uint32_t *s_frame_buffer = 0;
 static uint32_t *s_offline_frame_buffer = 0;
-static aw_emwin_fb_info_t *s_awtk_fb = NULL;
+static void     *s_awtk_fb = NULL;
 static int s_fb_size = 0;
 
 uint32_t* aworks_get_online_fb(void) {
@@ -43,15 +43,17 @@ uint32_t* aworks_get_offline_fb(void) {
   return s_offline_frame_buffer;
 }
 
-aw_emwin_fb_info_t* aworks_get_fb(void) {
+void* aworks_get_fb(void) {
   return s_awtk_fb;
 }
 
 int aworks_get_fb_size() {
-	return s_fb_size;
+  return s_fb_size;
 }
 
-aw_emwin_fb_info_t* aworks_lcd_init(void) {
+void* aworks_lcd_init(void) {
+  aw_fb_fix_info_t fix_info;
+
 #ifdef WITH_PXP_G2D
 // add AW_DEV_IMX1050_PXP check for compatible with aworks sdk v1.0.5 and v1.0.4
 #ifndef AW_DEV_IMX1050_PXP
@@ -59,29 +61,20 @@ aw_emwin_fb_info_t* aworks_lcd_init(void) {
 #endif
 #endif
 
-  int fb_size = 0;
-  s_awtk_fb = aw_emwin_fb_open("imx1050_emwin_fb", 0);
+  s_awtk_fb = aw_fb_open("imx1050_fb", 0);
   return_value_if_fail(s_awtk_fb != NULL, NULL);
 
-  fb_size = s_awtk_fb->x_res * s_awtk_fb->y_res * 2;
-  fb_size = (fb_size + AW_CACHE_LINE_SIZE - 1) / AW_CACHE_LINE_SIZE * AW_CACHE_LINE_SIZE;
-  s_fb_size = fb_size;
+  aw_fb_init(s_awtk_fb);
 
-  s_frame_buffer = (uint32_t*) aw_mem_align(fb_size, AW_CACHE_LINE_SIZE);
-  return_value_if_fail(s_frame_buffer != NULL, NULL);
-  memset(s_frame_buffer, 0x00, fb_size);
+  aw_fb_ioctl(s_awtk_fb, AW_FB_CMD_GET_FINFO, &fix_info);
 
-  s_offline_frame_buffer = (uint32_t*) aw_mem_align(fb_size, AW_CACHE_LINE_SIZE);
-  return_value_if_fail(s_offline_frame_buffer != NULL, NULL);
-  memset(s_offline_frame_buffer, 0x00, fb_size);
+  s_fb_size              = fix_info.buffer_size;
+  s_frame_buffer         = (uint32_t *)(fix_info.vram_addr);
+  s_offline_frame_buffer = (uint32_t *)(fix_info.vram_addr) + \
+                           aworks_get_fb_size() / 4;
+  aw_fb_start(s_awtk_fb);
 
-  return_value_if_fail(
-      AW_OK == aw_emwin_fb_init(s_awtk_fb, s_frame_buffer, AW_FB_VERTICAL_SCREEN),
-      NULL);
-
-  aw_emwin_fb_run(s_awtk_fb);
-
-  aw_emwin_fb_backlight(s_awtk_fb, 100);
+  aw_fb_backlight(s_awtk_fb, 100);
 
   return s_awtk_fb;
 }

@@ -4,7 +4,7 @@
 #include "stdint.h"
 #include "aw_cache.h"
 #include "aw_mem.h"
-#include "aw_emwin_fb.h"
+#include "aw_fb.h"
 #include "base/pixel.h"
 #include "driver/pxp/awbl_imx1050_pxp.h"
 #include "driver/pxp/imx1050_pxp_regs.h"
