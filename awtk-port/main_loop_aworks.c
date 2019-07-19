@@ -50,8 +50,21 @@ aw_local void __ts_task_entry(void *p_arg)
 
     if (tsret >= 0) {
       s_ts_state = ts_state;
+
+      if (ts_state.pressed) {
+        main_loop_post_pointer_event(main_loop(), ts_state.pressed, ts_state.x,
+            ts_state.y);
+      } else {
+        main_loop_post_pointer_event(main_loop(), ts_state.pressed, ts_state.x,
+            ts_state.y);
+      }
     }
-    aw_mdelay(10);
+
+    if (ts_state.pressed) {
+      aw_mdelay(2);
+    } else {
+      aw_mdelay(10);
+    }
   }
 }
 
@@ -98,14 +111,6 @@ ret_t platform_disaptch_input(main_loop_t* loop) {
     ts_id = ts_app_init();
   }
 
-  struct aw_ts_state ts_state = s_ts_state;
-  if (ts_state.pressed) {
-    main_loop_post_pointer_event(loop, ts_state.pressed, ts_state.x,
-        ts_state.y);
-  } else {
-    main_loop_post_pointer_event(loop, ts_state.pressed, ts_state.x,
-        ts_state.y);
-  }
   return RET_OK;
 }
 
