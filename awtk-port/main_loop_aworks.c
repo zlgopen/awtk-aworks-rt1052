@@ -95,12 +95,6 @@ static aw_ts_id ts_app_init(void) {
   sys_ts = aw_ts_serv_id_get(p_ts_name, 0, 0);
   return_value_if_fail(sys_ts != NULL, NULL);
 
-  if ((strcmp(p_ts_name, "imx105x-ts") == 0) || 
-      (strcmp(p_ts_name, "bu21029muv") == 0)) {
-    /* 电阻触摸屏需要读取校准数据, 电容屏无需读校准数据 */
-    return_value_if_fail(aw_ts_calc_data_read(sys_ts) == AW_OK, NULL);
-  }
-
   ts_task_init(sys_ts);
   return sys_ts;
 }
