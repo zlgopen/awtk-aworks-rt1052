@@ -23,12 +23,15 @@ def copyFile(src_root_dir, src, dst_root_dir, dst):
     s = joinPath(src_root_dir, src)
     d = joinPath(dst_root_dir, dst)
     print(s + '->' + d)
-    dir=os.path.dirname(d)
-    if os.path.exists(dir):
-        shutil.copyfile(s, d)
+    if os.path.exists(s) :
+        dir=os.path.dirname(d)
+        if os.path.exists(dir):
+            shutil.copyfile(s, d)
+        else:
+            os.makedirs(dir)
+            shutil.copyfile(s, d)
     else:
-        os.makedirs(dir)
-        shutil.copyfile(s, d)
+        print('!!! copyFile src NOT EXISTS: ' + s)
 
 def copyAwtkFile(src, dst):
     copyFile(AWTK_ROOT_DIR, src, DST_ROOT_DIR, dst)
@@ -48,10 +51,13 @@ def copyFiles(src_root_dir, src, dst_root_dir, dst, ignore_files = []):
     s = joinPath(src_root_dir, src)
     d = joinPath(dst_root_dir, dst)
     print(s + '->' + d)
-    shutil.rmtree(d, True)
-    ignore_files.append('*.o')
-    ignore_files.append('*.obj')
-    shutil.copytree(s, d, ignore=ignore_patterns_list(ignore_files))
+    if os.path.exists(s) :
+        shutil.rmtree(d, True)
+        ignore_files.append('*.o')
+        ignore_files.append('*.obj')
+        shutil.copytree(s, d, ignore=ignore_patterns_list(ignore_files))
+    else:
+        print('!!! copyFiles src NOT EXISTS: ' + s)
 
 def copyAwtkFiles(src, dst, ignore_files = []):
     copyFiles(AWTK_ROOT_DIR, src, DST_ROOT_DIR, dst, ignore_files)

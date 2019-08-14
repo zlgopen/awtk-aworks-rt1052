@@ -110,7 +110,7 @@ def mergelib_function(target, source, env):
     CUR_DIR = os.getcwd()
 
     if len(target) != 1 :
-        error_exit(u"target must be only one")
+        error_exit("target must be only one")
     target = str(target[0]);
     # delete abspath to avoid abspath include + char, result in ar cmd syntax error
     #target = os.path.abspath(target);
@@ -155,7 +155,7 @@ def mergelib_function(target, source, env):
             os.remove(tmp_ar_name)
             break;
         except :
-            print( u'error rm;')
+            print( 'error rm;')
             time.sleep(1)
 
     return None
