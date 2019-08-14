@@ -4,6 +4,7 @@ import os
 import glob
 import copy
 import shutil
+import fnmatch
 import platform
 
 
@@ -35,64 +36,95 @@ def copyAwtkFile(src, dst):
 def copyPortFile(src, dst):
     copyFile(PORT_ROOT_DIR, src, DST_ROOT_DIR, dst)
 
-def copyFiles(src_root_dir, src, dst_root_dir, dst):
+def ignore_patterns_list(patterns_list):
+    def _ignore_patterns(path, names):
+        ignored_names = []
+        for pattern in patterns_list:
+            ignored_names.extend(fnmatch.filter(names, pattern))
+        return set(ignored_names)
+    return _ignore_patterns
+
+def copyFiles(src_root_dir, src, dst_root_dir, dst, ignore_files = []):
     s = joinPath(src_root_dir, src)
     d = joinPath(dst_root_dir, dst)
     print(s + '->' + d)
     shutil.rmtree(d, True)
-    shutil.copytree(s, d, ignore=shutil.ignore_patterns("*.obj"))
+    ignore_files.append('*.o')
+    ignore_files.append('*.obj')
+    shutil.copytree(s, d, ignore=ignore_patterns_list(ignore_files))
 
-def copyAwtkFiles(src, dst):
-    copyFiles(AWTK_ROOT_DIR, src, DST_ROOT_DIR, dst)
+def copyAwtkFiles(src, dst, ignore_files = []):
+    copyFiles(AWTK_ROOT_DIR, src, DST_ROOT_DIR, dst, ignore_files)
 
-def copyPortFiles(src, dst):
-    copyFiles(PORT_ROOT_DIR, src, DST_ROOT_DIR, dst)
+def copyPortFiles(src, dst, ignore_files = []):
+    copyFiles(PORT_ROOT_DIR, src, DST_ROOT_DIR, dst, ignore_files)
 
+shutil.rmtree(DST_ROOT_DIR, True)
 
 copyAwtkFiles('3rd/stb', 'awtk/3rd/stb')
 copyAwtkFiles('3rd/libunibreak', 'awtk/3rd/libunibreak')
 copyAwtkFiles('3rd/gpinyin/src', 'awtk/3rd/gpinyin/src')
 copyAwtkFiles('3rd/gpinyin/include', 'awtk/3rd/gpinyin/include')
 
-copyAwtkFiles('3rd/nanovg/base', 'awtk/3rd/nanovg/base')
 if NANOVG_BACKEND == 'AGG':
-  copyAwtkFiles('3rd/agg', 'awtk/3rd/agg')
-  copyAwtkFiles('3rd/nanovg/agg', 'awtk/3rd/nanovg/agg')
+    copyAwtkFiles('3rd/nanovg/base', 'awtk/3rd/nanovg/base')
+    copyAwtkFiles('3rd/agg', 'awtk/3rd/agg')
+    copyAwtkFiles('3rd/nanovg/agg', 'awtk/3rd/nanovg/agg')
 elif NANOVG_BACKEND == 'AGGE':
-  copyAwtkFiles('3rd/agge', 'awtk/3rd/agge')
-  copyAwtkFiles('3rd/nanovg/agge', 'awtk/3rd/nanovg/agge')
+    copyAwtkFiles('3rd/nanovg/base', 'awtk/3rd/nanovg/base')
+    copyAwtkFiles('3rd/agge', 'awtk/3rd/agge')
+    copyAwtkFiles('3rd/nanovg/agge', 'awtk/3rd/nanovg/agge')
+elif NANOVG_BACKEND == 'CAIRO':
+    ignorePixmanFiles=['pixman-arm-detect-win32.asm',
+        'pixman-mips-dspr2-asm.S',
+        'pixman-mips-memcpy-asm.S',
+        'pixman-sse2.c',
+        'pixman-ssse3.c',
+        'pixman-vmx.c']
+
+    ignoreCairoFiles=['stars.c']
+
+    copyAwtkFiles('3rd/cairo', 'awtk/3rd/cairo', ignoreCairoFiles)
+    copyAwtkFiles('3rd/pixman', 'awtk/3rd/pixman', ignorePixmanFiles)
 else:
-  assert 0, "NANOVG_BACKEND != {AGG, AGGE}"
+    assert 0, "NANOVG_BACKEND != {AGG, AGGE, CAIRO}"
 
 
-copyAwtkFiles('src/misc', 'awtk/src/misc')
 copyAwtkFiles('src/xml', 'awtk/src/xml')
 copyAwtkFiles('src/svg', 'awtk/src/svg')
-copyAwtkFiles('src/base', 'awtk/src/base')
 copyAwtkFiles('src/tkc', 'awtk/src/tkc')
-copyAwtkFiles('src/layouters', 'awtk/src/layouters')
-copyAwtkFiles('src/widgets', 'awtk/src/widgets')
-copyAwtkFiles('src/font_loader', 'awtk/src/font_loader')
+copyAwtkFiles('src/base', 'awtk/src/base')
+copyAwtkFiles('src/misc', 'awtk/src/misc')
 copyAwtkFiles('src/blend', 'awtk/src/blend')
+copyAwtkFiles('src/widgets', 'awtk/src/widgets')
+copyAwtkFiles('src/layouters', 'awtk/src/layouters')
 copyAwtkFiles('src/ui_loader', 'awtk/src/ui_loader')
-copyAwtkFiles('src/image_loader', 'awtk/src/image_loader')
+copyAwtkFiles('src/clip_board', 'awtk/src/clip_board')
+copyAwtkFiles('src/font_loader', 'awtk/src/font_loader')
 copyAwtkFiles('src/ext_widgets', 'awtk/src/ext_widgets')
+copyAwtkFiles('src/image_loader', 'awtk/src/image_loader')
+copyAwtkFiles('src/window_manager', 'awtk/src/window_manager')
 copyAwtkFiles('src/widget_animators', 'awtk/src/widget_animators')
 copyAwtkFiles('src/window_animators', 'awtk/src/window_animators')
 copyAwtkFiles('src/dialog_highlighters', 'awtk/src/dialog_highlighters')
-copyAwtkFiles('src/clip_board', 'awtk/src/clip_board')
 
+copyAwtkFile('src/awtk.h', 'awtk/src/awtk.h')
+copyAwtkFile('src/awtk_tkc.h', 'awtk/src/awtk_tkc.h')
+copyAwtkFile('src/awtk_base.h', 'awtk/src/awtk_base.h')
 copyAwtkFile('src/awtk_global.c', 'awtk/src/awtk_global.c')
 copyAwtkFile('src/awtk_global.h', 'awtk/src/awtk_global.h')
-copyAwtkFile('src/awtk.h', 'awtk/src/awtk.h')
-copyAwtkFile('src/awtk_base.h', 'awtk/src/awtk_base.h')
-copyAwtkFile('src/awtk_tkc.h', 'awtk/src/awtk_tkc.h')
 copyAwtkFile('src/awtk_widgets.h', 'awtk/src/awtk_widgets.h')
 copyAwtkFile('src/awtk_ext_widgets.h', 'awtk/src/awtk_ext_widgets.h')
-copyAwtkFile('src/vgcanvas/vgcanvas_nanovg_soft.c', 'awtk/src/vgcanvas/vgcanvas_nanovg_soft.c')
-copyAwtkFile('src/vgcanvas/vgcanvas_nanovg_soft.inc', 'awtk/src/vgcanvas/vgcanvas_nanovg_soft.inc')
-copyAwtkFile('src/vgcanvas/vgcanvas_nanovg.inc', 'awtk/src/vgcanvas/vgcanvas_nanovg.inc')
+copyAwtkFile('src/native_window/native_window_raw.c', 'awtk/src/native_window/native_window_raw.c')
+copyAwtkFile('src/native_window/native_window_raw.h', 'awtk/src/native_window/native_window_raw.h')
 
+if NANOVG_BACKEND == 'AGG' or NANOVG_BACKEND == 'AGGE':
+    copyAwtkFile('src/vgcanvas/vgcanvas_nanovg_soft.c', 'awtk/src/vgcanvas/vgcanvas_nanovg_soft.c')
+    copyAwtkFile('src/vgcanvas/vgcanvas_nanovg_soft.inc', 'awtk/src/vgcanvas/vgcanvas_nanovg_soft.inc')
+    copyAwtkFile('src/vgcanvas/vgcanvas_nanovg.inc', 'awtk/src/vgcanvas/vgcanvas_nanovg.inc')
+elif NANOVG_BACKEND == 'CAIRO':
+    copyAwtkFile('src/vgcanvas/vgcanvas_cairo.c', 'awtk/src/vgcanvas/vgcanvas_cairo.c')
+  
 LCD_FILES=['lcd_mem.h',
     'lcd_mem.inc',
     'lcd_mem_rgba8888.h',

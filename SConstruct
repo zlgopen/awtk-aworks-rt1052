@@ -250,16 +250,18 @@ AWTK_LIB_NAME =ARGUMENTS.get('AWTK_LIB_NAME')
 
 
 
-env['CPPDEFINES'] = ['HAS_AWTK_CONFIG']
+env['CPPDEFINES'] = ['HAS_AWTK_CONFIG', 'HAVE_CONFIG_H']
 
 AWTK_COMMON_INCLUDE=['./output/awtk/src']
 AWTK_COMMON_INCLUDE.append( './output/awtk/src/ext_widgets' )
 AWTK_COMMON_INCLUDE.append( './output/awtk/3rd' )
 AWTK_COMMON_INCLUDE.append( './output/awtk/3rd/agge' )
+AWTK_COMMON_INCLUDE.append( './output/awtk/3rd/cairo' )
 AWTK_COMMON_INCLUDE.append( './output/awtk/3rd/nanovg' )
 AWTK_COMMON_INCLUDE.append( './output/awtk/3rd/nanovg/base' )
 AWTK_COMMON_INCLUDE.append( './output/awtk/3rd/gpinyin/include' )
 AWTK_COMMON_INCLUDE.append( './output/awtk/3rd/libunibreak' )
+AWTK_COMMON_INCLUDE.append( './output/awtk/3rd/pixman' )
 AWTK_COMMON_INCLUDE.append( './output/awtk-port' )
 
 env['CPPPATH'] = AWTK_COMMON_INCLUDE
