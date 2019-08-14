@@ -190,7 +190,7 @@ def mk_gcc_environment():
     ###########################################################################################################
     DEBUG_FLAGS = ' -g3 -gdwarf-2 '
     ###########################################################################################################
-    __build_type_debug_opt_flags = ('-O0','-O3 -flto','-Os -flto','-O2')
+    __build_type_debug_opt_flags = ('-O0','-O3','-Os','-O2')
     __permit_build_type=('Debug','Release','MinSizeRel','RelWithDebInfo')
     BUILD_TYPE = 'Release'
     OPT_FLAGS = __build_type_debug_opt_flags[__permit_build_type.index(BUILD_TYPE)];
@@ -205,7 +205,9 @@ def mk_gcc_environment():
     env['CXXFLAGS'] =AWTK_CFLAGS
 
     tool_add_merge_lib(env)
-    tool_set_arm_none_eabi_ar_with_lto_plugin(env)
+    env['ARFLAGS']     = u'rcPv '
+    env['RANLIBFLAGS'] = u''
+    #tool_set_arm_none_eabi_ar_with_lto_plugin(env)
 
     return env
 
