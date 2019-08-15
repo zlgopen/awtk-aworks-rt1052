@@ -13,7 +13,12 @@ import platform
 AWTK_ROOT_DIR = '../awtk';
 PORT_ROOT_DIR = os.getcwd();
 DST_ROOT_DIR = './output';
-NANOVG_BACKEND = 'AGGE'
+
+VGCANVAS='NANOVG'
+#VGCANVAS='CAIRO'
+
+NANOVG_BACKEND='AGGE'
+#NANOVG_BACKEND='AGG'
 
 
 def joinPath(root, subdir):
@@ -72,15 +77,15 @@ copyAwtkFiles('3rd/libunibreak', 'awtk/3rd/libunibreak')
 copyAwtkFiles('3rd/gpinyin/src', 'awtk/3rd/gpinyin/src')
 copyAwtkFiles('3rd/gpinyin/include', 'awtk/3rd/gpinyin/include')
 
-if NANOVG_BACKEND == 'AGG':
+if VGCANVAS == 'NANOVG' and NANOVG_BACKEND == 'AGG':
     copyAwtkFiles('3rd/nanovg/base', 'awtk/3rd/nanovg/base')
     copyAwtkFiles('3rd/agg', 'awtk/3rd/agg')
     copyAwtkFiles('3rd/nanovg/agg', 'awtk/3rd/nanovg/agg')
-elif NANOVG_BACKEND == 'AGGE':
+elif VGCANVAS == 'NANOVG' and NANOVG_BACKEND == 'AGGE':
     copyAwtkFiles('3rd/nanovg/base', 'awtk/3rd/nanovg/base')
     copyAwtkFiles('3rd/agge', 'awtk/3rd/agge')
     copyAwtkFiles('3rd/nanovg/agge', 'awtk/3rd/nanovg/agge')
-elif NANOVG_BACKEND == 'CAIRO':
+elif VGCANVAS == 'CAIRO':
     ignorePixmanFiles=['pixman-arm-detect-win32.asm',
         'pixman-mips-dspr2-asm.S',
         'pixman-mips-memcpy-asm.S',
@@ -93,7 +98,7 @@ elif NANOVG_BACKEND == 'CAIRO':
     copyAwtkFiles('3rd/cairo', 'awtk/3rd/cairo', ignoreCairoFiles)
     copyAwtkFiles('3rd/pixman', 'awtk/3rd/pixman', ignorePixmanFiles)
 else:
-    assert 0, "NANOVG_BACKEND != {AGG, AGGE, CAIRO}"
+    assert 0, " VGCANVAS != {NANOVG, CAIRO} and NANOVG_BACKEND != {AGG, AGGE}"
 
 
 copyAwtkFiles('src/xml', 'awtk/src/xml')
@@ -124,12 +129,14 @@ copyAwtkFile('src/awtk_ext_widgets.h', 'awtk/src/awtk_ext_widgets.h')
 copyAwtkFile('src/native_window/native_window_raw.c', 'awtk/src/native_window/native_window_raw.c')
 copyAwtkFile('src/native_window/native_window_raw.h', 'awtk/src/native_window/native_window_raw.h')
 
-if NANOVG_BACKEND == 'AGG' or NANOVG_BACKEND == 'AGGE':
+if VGCANVAS == 'NANOVG' and (NANOVG_BACKEND == 'AGG' or NANOVG_BACKEND == 'AGGE'):
     copyAwtkFile('src/vgcanvas/vgcanvas_nanovg_soft.c', 'awtk/src/vgcanvas/vgcanvas_nanovg_soft.c')
     copyAwtkFile('src/vgcanvas/vgcanvas_nanovg_soft.inc', 'awtk/src/vgcanvas/vgcanvas_nanovg_soft.inc')
     copyAwtkFile('src/vgcanvas/vgcanvas_nanovg.inc', 'awtk/src/vgcanvas/vgcanvas_nanovg.inc')
-elif NANOVG_BACKEND == 'CAIRO':
+elif VGCANVAS == 'CAIRO':
     copyAwtkFile('src/vgcanvas/vgcanvas_cairo.c', 'awtk/src/vgcanvas/vgcanvas_cairo.c')
+else :
+    assert 0, " VGCANVAS != {NANOVG, CAIRO} and NANOVG_BACKEND != {AGG, AGGE}"
   
 LCD_FILES=['lcd_mem.h',
     'lcd_mem.inc',

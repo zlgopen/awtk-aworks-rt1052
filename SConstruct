@@ -257,6 +257,7 @@ env['CPPDEFINES'] = ['HAS_AWTK_CONFIG', 'HAVE_CONFIG_H']
 AWTK_COMMON_INCLUDE=['./output/awtk/src']
 AWTK_COMMON_INCLUDE.append( './output/awtk/src/ext_widgets' )
 AWTK_COMMON_INCLUDE.append( './output/awtk/3rd' )
+AWTK_COMMON_INCLUDE.append( './output/awtk/3rd/agg/include' )
 AWTK_COMMON_INCLUDE.append( './output/awtk/3rd/agge' )
 AWTK_COMMON_INCLUDE.append( './output/awtk/3rd/cairo' )
 AWTK_COMMON_INCLUDE.append( './output/awtk/3rd/nanovg' )
