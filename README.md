@@ -21,6 +21,7 @@ git clone https://github.com/zlgopen/awtk-aworks-rt1052.git
 ```
 AWTK_ROOT_DIR = '../awtk';
 DST_ROOT_DIR = './output';
+VGCANVAS = 'NANOVG'
 NANOVG_BACKEND = 'AGGE'
 ```
 
@@ -86,11 +87,13 @@ HAS_AWTK_CONFIG
 
 - "Cross ARM C++ Compiler" -> "Includes"
 
-## 二、注意事项
+## 二、其他设置问题
 
-1、Eclipse 工程的 rt1050_sdram.ld 有以下两种配置，根据工程需要选择
+#### 2.1 内存配置
 
-**code = 4M的配置**
+Eclipse 工程的 rt1050_sdram.ld 有以下两种配置，根据工程需要选择
+
+##### code = 4M的配置
 
 ```
 MEMORY
@@ -103,7 +106,7 @@ MEMORY
 }
 ```
 
-**code = 8M的配置**
+##### code = 8M的配置
 
 ```
 MEMORY
@@ -116,14 +119,45 @@ MEMORY
 }
 ```
 
-2、关于awtk_config.h的常用配置
+#### 2.2 渲染模式选择
 
-| 宏               | 说明                                                         |
-| ---------------- | ------------------------------------------------------------ |
-| WITH_PXP_G2D     | 开启2D加速，可以加快贴图速度                                 |
-| WITH_THREE_FB    | 开启三缓冲机制，提高刷新帧率，但如果使用 tk_set_lcd_orientation 旋转屏幕，则应该注释该行，使用默认的双缓冲机制 |
-| WITH_NANOVG_AGGE | 使用 AGGE 作为渲染后端，要使用 AGG 则可以改为 WITH_NANOVG_AGG |
+##### 使用 AGGE 模式（默认）
 
+- 修改 copy\_files.py
+
+  ```
+  VGCANVAS = 'NANOVG'
+  NANOVG_BACKEND = 'AGGE'
+  ```
+
+- 修改 awtk_config.h
+
+  ```
+  #define WITH_NANOVG_AGGE 1
+  ```
+
+##### 使用 AGG 模式
+
+- 修改 copy\_files.py
+
+  ```
+  VGCANVAS = 'NANOVG'
+  NANOVG_BACKEND = 'AGG'
+  ```
+
+- 修改 awtk_config.h
+
+  ```
+  #define WITH_NANOVG_AGG 1
+  ```
+
+##### 使用 CAIRO 模式
+
+- 修改 copy\_files.py
+
+  ```
+  VGCANVAS = 'CAIRO'
+  ```
 
 ## 三、Keil 环境设置问题
 
