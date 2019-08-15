@@ -136,6 +136,12 @@ MEMORY
   #define WITH_NANOVG_AGGE 1
   ```
 
+- 添加工程 include 路径
+
+  ```
+  "${workspace_loc:/${ProjName}/awtk/3rd/agge}"
+  ```
+
 ##### 使用 AGG 模式
 
 - 修改 copy\_files.py
@@ -151,12 +157,25 @@ MEMORY
   #define WITH_NANOVG_AGG 1
   ```
 
+- 添加工程 include 路径
+
+  ```
+  "${workspace_loc:/${ProjName}/awtk/3rd/agg}"
+  ```
+
 ##### 使用 CAIRO 模式
 
 - 修改 copy\_files.py
 
   ```
   VGCANVAS = 'CAIRO'
+  ```
+
+- 添加工程 include 路径
+
+  ```
+  "${workspace_loc:/${ProjName}/awtk/3rd/cairo}"
+  "${workspace_loc:/${ProjName}/awtk/3rd/pixman}"
   ```
 
 ## 三、Keil 环境设置问题
