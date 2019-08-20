@@ -230,7 +230,7 @@ def mk_armcc_environment():
     env['ARCOMSTR'] = u"AR $TARGET"  
 
     env['CFLAGS'] = '--c99'
-    env['CCFLAGS'] = '--cpu=Cortex-M7  --gnu -O3 -Ospace'
+    env['CCFLAGS'] = '--cpu=Cortex-M7.fp.dp --apcs=interwork --gnu -O3 -Ospace'
     env['CXXFLAGS'] = '--cpp'
 
     import SCons.Tool
