@@ -27,7 +27,7 @@
 #include "aw_delay.h"
 #include "aw_vdebug.h"
 #include <string.h>
-
+#include "aw_prj_params.h"
 #include "base/types_def.h"
 
 static uint32_t *s_frame_buffer = 0;
