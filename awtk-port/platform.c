@@ -83,7 +83,7 @@ static ret_t date_time_get_now_impl(date_time_t* dt) {
 }
 #endif
 
-uint32_t get_time_ms() {
+uint64_t get_time_ms() {
   return aw_sys_tick_get();
 }
 
