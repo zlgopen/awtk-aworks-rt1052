@@ -1,4 +1,4 @@
-
+ï»¿
 #include "driver/pxp/awbl_imx1050_pxp.h"
 #include "base/g2d.h"
 #include "stdint.h"
@@ -13,8 +13,8 @@
 
 ret_t g2d_fill_rect(bitmap_t* fb, rect_t* dst, color_t c)
 {
-
-    //ÔİÊ±²»ÓÃ£¬Ğ§ÂÊ²»¼°Èí¼şÊµÏÖ
+    uint8_t* fb_data = NULL;
+    //æš‚æ—¶ä¸ç”¨ï¼Œæ•ˆç‡ä¸åŠè½¯ä»¶å®ç°
     return RET_NOT_IMPL;
 
     return_value_if_fail(fb != NULL && dst != NULL, RET_BAD_PARAMS);
@@ -28,15 +28,16 @@ ret_t g2d_fill_rect(bitmap_t* fb, rect_t* dst, color_t c)
     uint32_t out_addr = 0;
     uint8_t  out_pixsize = 2;
 
-    /* ¸´Î»pxp */
+    /* å¤ä½pxp */
     pxp_hard_reset();
-
-    /* ¼ÆËãPSÆğÊ¼µØÖ· */
-    out_addr = (uint32_t)fb->data + (fb->w * dst->y + dst->x) * out_pixsize;
+    
+    fb_data = bitmap_lock_buffer_for_write(fb);
+    /* è®¡ç®—PSèµ·å§‹åœ°å€ */
+    out_addr = (uint32_t)fb_data + (fb->w * dst->y + dst->x) * out_pixsize;
     uint32_t fb_flush_size = ((dst->h - 1) * fb->w + dst->w) * out_pixsize;
     aw_cache_flush((void *)out_addr,  fb_flush_size);
 
-    /* Êä³ö»º³åÅäÖÃ */
+    /* è¾“å‡ºç¼“å†²é…ç½® */
     pxp_output_config.pixel_format = kPXP_OutputPixelFormatRGB565;
     pxp_output_config.interlaced_mode = kPXP_OutputProgressive;
     pxp_output_config.buffer0_addr = out_addr;
@@ -45,7 +46,7 @@ ret_t g2d_fill_rect(bitmap_t* fb, rect_t* dst, color_t c)
     pxp_output_config.height = dst->h;
     pxp_set_output_buffer_config(&pxp_output_config);
 
-    /* ÅäÖÃPS buffer */
+    /* é…ç½®PS buffer */
     ps_buffer_config.pixel_format = kPXP_PsPixelFormatRGB888;
     ps_buffer_config.buffer_addr  = out_addr;
     ps_buffer_config.pitch_bytes  = fb->w * out_pixsize;
@@ -55,13 +56,14 @@ ret_t g2d_fill_rect(bitmap_t* fb, rect_t* dst, color_t c)
 
     pxp_set_process_surface_color_key(0, 0xFFFFFF);
 
-    /* ÉèÖÃÌî³äµÄÑÕÉ« */
+    /* è®¾ç½®å¡«å……çš„é¢œè‰² */
     pxp_set_process_surface_back_ground_color((uint32_t)c.color & (0xFFFFFF));
     pxp_start();
 
     /* Wait for process complete. */
     pxp_complete_status_sync();
     aw_cache_invalidate((void *)out_addr, fb_flush_size);
+    bitmap_unlock_buffer(fb);
 
     return RET_OK;
 }
@@ -69,8 +71,9 @@ ret_t g2d_fill_rect(bitmap_t* fb, rect_t* dst, color_t c)
 
 ret_t g2d_copy_image(bitmap_t* fb, bitmap_t* img, rect_t* src, xy_t dx, xy_t dy)
 {
-
-    //ÔİÊ±²»ÓÃ£¬Ğ§ÂÊ²»¼°Èí¼şÊµÏÖ
+    uint8_t* fb_data = NULL;
+    uint8_t* img_data = NULL;
+    //æš‚æ—¶ä¸ç”¨ï¼Œæ•ˆç‡ä¸åŠè½¯ä»¶å®ç°
     return RET_NOT_IMPL;
 
     return_value_if_fail(fb != NULL && img != NULL && src != NULL, RET_BAD_PARAMS);
@@ -98,16 +101,19 @@ ret_t g2d_copy_image(bitmap_t* fb, bitmap_t* img, rect_t* src, xy_t dx, xy_t dy)
         ps_format = kPXP_PsPixelFormatRGB888;
     }
 
-    /* ¸´Î»pxp */
+    /* å¤ä½pxp */
     pxp_hard_reset();
 
-    /* ¼ÆËãÊä³ö»º³åµÄÆğÊ¼µØÖ· */
-    out_addr = (uint32_t)fb->data + (fb->w * dy + dx) * out_pixsize;
+    fb_data = bitmap_lock_buffer_for_write(fb);
+    img_data = bitmap_lock_buffer_for_read(img);
+
+    /* è®¡ç®—è¾“å‡ºç¼“å†²çš„èµ·å§‹åœ°å€ */
+    out_addr = (uint32_t)fb_data + (fb->w * dy + dx) * out_pixsize;
     uint32_t fb_flush_size = ((src->h - 1) * fb->w + src->w) * out_pixsize;
     aw_cache_flush((void *)out_addr, fb_flush_size);
 
-    /* ¼ÆËãPSÆğÊ¼µØÖ· */
-    ps_addr = ((uint32_t)img->data + ps_pixsize * (img->w * src->y + src->x));
+    /* è®¡ç®—PSèµ·å§‹åœ°å€ */
+    ps_addr = ((uint32_t)img_data + ps_pixsize * (img->w * src->y + src->x));
     uint32_t img_flush_size = ((src->h - 1) * img->w + src->w) * ps_pixsize;
     aw_cache_flush((void *)ps_addr, img_flush_size);
 
@@ -135,16 +141,21 @@ ret_t g2d_copy_image(bitmap_t* fb, bitmap_t* img, rect_t* src, xy_t dx, xy_t dy)
     pxp_complete_status_sync();
     aw_cache_invalidate((void *)out_addr, fb_flush_size);
 
+    bitmap_unlock_buffer(fb);
+    bitmap_unlock_buffer(img);
+
     return RET_OK;
 }
 
 
 ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uint8_t global_alpha)
 {
+    uint8_t* fb_data = NULL;
+    uint8_t* img_data = NULL;
     //return RET_NOT_IMPL;
 
-    return_value_if_fail(fb != NULL && fb->data != NULL, RET_BAD_PARAMS);
-    return_value_if_fail(img != NULL && img->data != NULL && src != NULL && dst != NULL,
+    return_value_if_fail(fb != NULL && fb->buffer != NULL, RET_BAD_PARAMS);
+    return_value_if_fail(img != NULL && img->buffer != NULL && src != NULL && dst != NULL,
                          RET_BAD_PARAMS);
     return_value_if_fail(fb->format == BITMAP_FMT_BGR565 || fb->format == BITMAP_FMT_BGRA8888,
                          RET_BAD_PARAMS);
@@ -152,7 +163,7 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
                          RET_BAD_PARAMS);
 
     if (((src->w != dst->w) || (src->h != dst->h)) && (img->format == BITMAP_FMT_BGRA8888)) {
-        return RET_NOT_IMPL;    /* Ó²¼ş²»Ö§³ÖBGRA8888Êı¾İµÄËõ·Å */
+        return RET_NOT_IMPL;    /* ç¡¬ä»¶ä¸æ”¯æŒBGRA8888æ•°æ®çš„ç¼©æ”¾ */
     }
 
     uint16_t as_format   = 0;
@@ -202,38 +213,41 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
     as_x = src->x;
     as_y = src->y;
     as_w = img->w;
+    
+    fb_data = bitmap_lock_buffer_for_write(fb);
+    img_data = bitmap_lock_buffer_for_read(img);
 
-    /* ¼ÆËãASÆğÊ¼µØÖ· */
-    as_addr = ((uint32_t)img->data + as_pixsize * (as_w * as_y + as_x));
+    /* è®¡ç®—ASèµ·å§‹åœ°å€ */
+    as_addr = ((uint32_t)img_data + as_pixsize * (as_w * as_y + as_x));
     uint32_t img_flush_size = ((src->h - 1) * img->w + src->w) * as_pixsize;
     aw_cache_flush((void *)as_addr, img_flush_size);
 
-    /* ¸´Î»pxp */
+    /* å¤ä½pxp */
     pxp_hard_reset();
 
-    /* ÅĞ¶ÏÊÇ·ñĞèÒªËõ·Å */
+    /* åˆ¤æ–­æ˜¯å¦éœ€è¦ç¼©æ”¾ */
     if ((src->w != dst->w) || (src->h != dst->h)) {
 
         ps_x = src->x;
         ps_y = src->y;
         ps_w = img->w;
 
-        /* ÉêÇëÒ»Æ¬dstÄ¿±êÏàÍ¬Ãæ»ıµÄ»º´æ */
+        /* ç”³è¯·ä¸€ç‰‡dstç›®æ ‡ç›¸åŒé¢ç§¯çš„ç¼“å­˜ */
         p_scale_buf = (uint8_t *)aw_mem_align(dst->w * dst->h * out_pixsize, 32);
         return_value_if_fail(p_scale_buf != NULL, RET_FAIL);
 
-        /* ¼ÆËãPSÆğÊ¼µØÖ· */
-        ps_addr = ((uint32_t)img->data + ps_pixsize * (ps_w * ps_y + ps_x));
+        /* è®¡ç®—PSèµ·å§‹åœ°å€ */
+        ps_addr = ((uint32_t)img_data + ps_pixsize * (ps_w * ps_y + ps_x));
 
         /* PS configure. */
         ps_buffer_config.pixel_format  = ps_format;
         ps_buffer_config.buffer_addr   = (uint32_t)ps_addr;
         ps_buffer_config.pitch_bytes   = ps_w * ps_pixsize;
 
-        /* ÅäÖÃPS buffer */
+        /* é…ç½®PS buffer */
         pxp_set_process_surface_buffer_config(&ps_buffer_config);
 
-        /* ½ûÄÜAS */
+        /* ç¦èƒ½AS */
         pxp_set_alpha_surface_position(0xFFFF, 0xFFFF, 0, 0);
 
         /* Output config. */
@@ -249,20 +263,20 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
         /* Disable CSC1, it is enabled by default. */
         pxp_enable_csc1(0);
 
-        /* ÉèÖÃËõ·ÅµÄÊäÈëºÍÊä³öÍ¼ÏñµÄ³¤¡¢¿í  */
+        /* è®¾ç½®ç¼©æ”¾çš„è¾“å…¥å’Œè¾“å‡ºå›¾åƒçš„é•¿ã€å®½  */
         pxp_set_process_surface_scaler(src->w, src->h, dst->w, dst->h);
 
-        /* ÉèÖÃPSÍ¼ĞÎ´óĞ¡ÎªÄ¿±ê´°¿ÚµÄ´óĞ¡ */
+        /* è®¾ç½®PSå›¾å½¢å¤§å°ä¸ºç›®æ ‡çª—å£çš„å¤§å° */
         pxp_set_process_surface_position(0, 0, dst->w - 1, dst->h - 1);
 
-        /* ¿ªÊ¼Ëõ·Å´¦Àí */
+        /* å¼€å§‹ç¼©æ”¾å¤„ç† */
         pxp_start();
 
         /* Wait for process complete. */
         pxp_complete_status_sync();
 
-        /* ÖÁ´Ë£¬Ëõ·Å´¦ÀíµÄÍ¼ÏñÒÑ¾­´æ·ÅÔÚp_scale_buf»º³åÇøÖĞ £¬´ËÊ±ÖØĞÂ¸³ÖµASÆğÊ¼µØÖ·£¬
-         * ÓÃÓÚ½ÓÏÂÀ´µÄblend¡£
+        /* è‡³æ­¤ï¼Œç¼©æ”¾å¤„ç†çš„å›¾åƒå·²ç»å­˜æ”¾åœ¨p_scale_bufç¼“å†²åŒºä¸­ ï¼Œæ­¤æ—¶é‡æ–°èµ‹å€¼ASèµ·å§‹åœ°å€ï¼Œ
+         * ç”¨äºæ¥ä¸‹æ¥çš„blendã€‚
          */
         as_addr = (uint32_t)p_scale_buf;
         as_x = dst->x;
@@ -272,18 +286,18 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
         as_format  = out_format;
         as_pixsize = out_pixsize;
 
-        /* ¸´Î»Ò»ÏÂPXP£¬Ê¹Ëõ·Å¹¦ÄÜÊ§Ğ§£¬ÕâÑù²Å²»»áÓ°Ïì½ÓÏÂÀ´µÄblend */
+        /* å¤ä½ä¸€ä¸‹PXPï¼Œä½¿ç¼©æ”¾åŠŸèƒ½å¤±æ•ˆï¼Œè¿™æ ·æ‰ä¸ä¼šå½±å“æ¥ä¸‹æ¥çš„blend */
         pxp_hard_reset();
         //aw_cache_invalidate((void *)p_scale_buf, dst->w * dst->h * out_pixsize);
     }
 
     uint32_t fb_flush_size = ((dst->h - 1) * fb->w + dst->w) * out_pixsize;
 
-    /* ¼ÆËãÊä³ö»º³åÇøÆğÊ¼µØÖ· */
-    out_addr = (uint32_t)fb->data + (fb->w * dst->y + dst->x) * out_pixsize;
+    /* è®¡ç®—è¾“å‡ºç¼“å†²åŒºèµ·å§‹åœ°å€ */
+    out_addr = (uint32_t)fb_data + (fb->w * dst->y + dst->x) * out_pixsize;
     aw_cache_flush((void *)out_addr,  fb_flush_size);
 
-    /* BGR565 ²»ĞèÒªäÖÈ¾µÄÇé¿ö */
+    /* BGR565 ä¸éœ€è¦æ¸²æŸ“çš„æƒ…å†µ */
     if ((img->format == BITMAP_FMT_BGR565) && (global_alpha  > 0xfb)) {
         /* PS configure. */
         ps_buffer_config.pixel_format  = ps_format;
@@ -301,32 +315,32 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
         ps_buffer_config.buffer_addr   = (uint32_t)out_addr;
         ps_buffer_config.pitch_bytes   = fb->w * out_pixsize;
 
-        /* ÅäÖÃPS buffer */
+        /* é…ç½®PS buffer */
         pxp_set_process_surface_buffer_config(&ps_buffer_config);
 
-        /* AS ÅäÖÃ²ÎÊıÉèÖÃ */
+        /* AS é…ç½®å‚æ•°è®¾ç½® */
         pxp_as_buffer_config_t as_buffer_config = {
             .pixel_format = as_format,
             .buffer_addr  = (uint32_t)as_addr,
             .pitch_bytes  = as_w * as_pixsize,
         };
 
-        /* ASÅäÖÃ */
+        /* ASé…ç½® */
         pxp_set_alpha_surface_buffer_config(&as_buffer_config);
 
-        /* ÉèÖÃÍ¸Ã÷¶ÈµÄÒ»Ğ©ÊôĞÔ */
+        /* è®¾ç½®é€æ˜åº¦çš„ä¸€äº›å±æ€§ */
         pxp_as_blend_config_t as_blend_config = {
-            .alpha = global_alpha,   /* ÉèÖÃÍ¸Ã÷¶È */
+            .alpha = global_alpha,   /* è®¾ç½®é€æ˜åº¦ */
             .invert_alpha = 0,
             .alpha_mode = kPXP_AlphaMultiply,
-            .rop_mode = kPXP_RopMergeAs        /* »ìºÏÑÕÉ« */
+            .rop_mode = kPXP_RopMergeAs        /* æ··åˆé¢œè‰² */
         };
         pxp_set_alpha_surface_blend_config(&as_blend_config);
 
-        /* ÉèÖÃASµÄÎ»ÖÃ */
+        /* è®¾ç½®ASçš„ä½ç½® */
         pxp_set_alpha_surface_position(0, 0, dst->w - 1, dst->h - 1);
 
-        /* ÉèÖÃPSµÄÎ»ÖÃ */
+        /* è®¾ç½®PSçš„ä½ç½® */
         pxp_set_process_surface_position(0, 0, dst->w - 1, dst->h - 1);
     }
 
@@ -344,17 +358,19 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
     /* Disable CSC1, it is enabled by default. */
     pxp_enable_csc1(0);
 
-    /* ¿ªÊ¼blend */
+    /* å¼€å§‹blend */
     pxp_start();
 
     /* Wait for process complete. */
     pxp_complete_status_sync();
     aw_cache_invalidate((void *)out_addr, fb_flush_size);
 
-    /* ÊÍ·ÅÄÚ´æ */
+    /* é‡Šæ”¾å†…å­˜ */
     if (p_scale_buf != NULL) {
         aw_mem_free(p_scale_buf);
     }
+    bitmap_unlock_buffer(fb);
+    bitmap_unlock_buffer(img);
 
     return RET_OK;
 }
@@ -364,6 +380,8 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
 
 ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation_t o)
 {
+    uint8_t* fb_data = NULL;
+    uint8_t* img_data = NULL;
     assert(src->x >= 0);
     assert(src->y >= 0);
     assert(src->w >= 0);
@@ -413,7 +431,7 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
     ps_y = src->y;
     ps_w = img->w;
 
-    /* ²¹³¥Í¼ĞÎµÄ±ß³¤Îª8µÄÕûÊı±¶,·ñÔòĞı×ªºóÓĞ¾â³İ */
+    /* è¡¥å¿å›¾å½¢çš„è¾¹é•¿ä¸º8çš„æ•´æ•°å€,å¦åˆ™æ—‹è½¬åæœ‰é”¯é½¿ */
     int re   = src->h % 8;
     int tmp  = src->h ;
     int diff = 0;
@@ -421,7 +439,7 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
        diff = 8 - re;
        tmp += diff;
        if (src->y + tmp > img->h) {
-           return RET_NOT_IMPL;  /* ·µ»Ø£¬Ê¹ÓÃÈí¼şĞı×ª */
+           return RET_NOT_IMPL;  /* è¿”å›ï¼Œä½¿ç”¨è½¯ä»¶æ—‹è½¬ */
        } else {
            src->h = tmp;
        }
@@ -432,7 +450,7 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
         diff = 8 - re;
         tmp  += diff;
         if (src->x + tmp > img->w) {
-           return RET_NOT_IMPL;  /* ·µ»Ø£¬Ê¹ÓÃÈí¼şĞı×ª */
+           return RET_NOT_IMPL;  /* è¿”å›ï¼Œä½¿ç”¨è½¯ä»¶æ—‹è½¬ */
        } else {
            src->w = tmp;
        }
@@ -443,20 +461,22 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
     targ_x = src->y;
     targ_y = fb->h - src->x - src->w;
 
-    /* ¼ÆËãÊä³ö»º³åÇøÆğÊ¼µØÖ· */
+    fb_data = bitmap_lock_buffer_for_write(fb);
+    img_data = bitmap_lock_buffer_for_read(img);
+    /* è®¡ç®—è¾“å‡ºç¼“å†²åŒºèµ·å§‹åœ°å€ */
     uint32_t fb_flush_size = ((src->w - 1) * fb->w + src->h) * out_pixsize;
-    out_addr = (uint32_t)fb->data + (fb->w * targ_y + targ_x) * out_pixsize;
+    out_addr = (uint32_t)fb_data + (fb->w * targ_y + targ_x) * out_pixsize;
     aw_cache_flush((void *)out_addr,  fb_flush_size);
 
-    /* ¼ÆËãPSÆğÊ¼µØÖ· */
-    ps_addr = ((uint32_t)img->data) + (ps_y * ps_w + ps_x)* ps_pixsize ;
+    /* è®¡ç®—PSèµ·å§‹åœ°å€ */
+    ps_addr = ((uint32_t)img_data) + (ps_y * ps_w + ps_x)* ps_pixsize ;
     uint32_t img_flush_size = ((src->h - 1) * img->w + src->w) * ps_pixsize;
     aw_cache_flush((void *)ps_addr, img_flush_size);
 
-    /* ¸´Î»pxp */
+    /* å¤ä½pxp */
     pxp_hard_reset();
 
-    /* ÅäÖÃPS buffer */
+    /* é…ç½®PS buffer */
     ps_buffer_config.pixel_format  = ps_format;
     ps_buffer_config.buffer_addr   = (uint32_t)ps_addr;
     ps_buffer_config.pitch_bytes   = ps_w * ps_pixsize;
@@ -465,7 +485,7 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
                                      0,
                                      src->h - 1,
                                      src->w - 1);
-    /* ½ûÄÜAS */
+    /* ç¦èƒ½AS */
     pxp_set_alpha_surface_position(1, 1, 0, 0);
 
     /* Output config. */
@@ -480,15 +500,17 @@ ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation
     /* Disable CSC1, it is enabled by default */
     pxp_enable_csc1(0);
 
-    /* Ğı×ª270¶È(Ğı×ª½á¹ûºÍÈí¼şÊµÏÖµÄĞı×ª90¶ÈµÄ½á¹û²ÅÒ»ÖÂ) */
+    /* æ—‹è½¬270åº¦(æ—‹è½¬ç»“æœå’Œè½¯ä»¶å®ç°çš„æ—‹è½¬90åº¦çš„ç»“æœæ‰ä¸€è‡´) */
     pxp_set_rotate_config(kPXP_RotateProcessSurface, kPXP_Rotate270, kPXP_FlipDisable);
 
-    /* ¿ªÊ¼Ğı×ª */
+    /* å¼€å§‹æ—‹è½¬ */
     pxp_start();
 
     /* Wait for process complete. */
     pxp_complete_status_sync();
     aw_cache_invalidate((void *)out_addr, fb_flush_size);
+    bitmap_unlock_buffer(fb);
+    bitmap_unlock_buffer(img);
 
     return RET_OK;
 }
