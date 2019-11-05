@@ -117,6 +117,7 @@ extern uint32_t* aworks_get_offline_fb(void);
 extern void*     aworks_get_fb(void);
 extern int       aworks_get_fb_size();
 static lcd_flush_t s_lcd_flush_default = NULL;
+static lcd_begin_frame_t s_lcd_begin_frame_default = NULL;
 
 static ret_t lcd_aworks_fb_flush(lcd_t* lcd) {
   if (s_lcd_flush_default != NULL) {
@@ -151,6 +152,9 @@ static ret_t lcd_aworks_begin_frame(lcd_t* lcd, rect_t* dirty_rect) {
 #endif
   }
 
+  if(s_lcd_begin_frame_default != NULL) {
+    return s_lcd_begin_frame_default(lcd, dirty_rect);
+  }
   return RET_OK;
 }
 
@@ -177,6 +181,7 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
     lcd->flush = lcd_aworks_fb_flush;
 
     // 使用swap机制(正常屏幕方向进入swap流程)
+    s_lcd_begin_frame_default = lcd->begin_frame;
     lcd->begin_frame = lcd_aworks_begin_frame;
     lcd->swap = lcd_aworks_swap;
   }
@@ -194,6 +199,10 @@ static ret_t lcd_aworks_begin_frame(lcd_t* lcd, rect_t* dirty_rect) {
   if (lcd_is_swappable(lcd)) {
     lcd_mem_t* mem = (lcd_mem_t*)lcd;
     (void)mem;
+  }
+
+  if(s_lcd_begin_frame_default != NULL) {
+    return s_lcd_begin_frame_default(lcd, dirty_rect);
   }
   return RET_OK;
 }
@@ -222,6 +231,7 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
     lcd->flush = lcd_aworks_fb_flush;
 
     // 使用swap机制(正常屏幕方向进入swap流程)
+    s_lcd_begin_frame_default = lcd->begin_frame;
     lcd->begin_frame = lcd_aworks_begin_frame;
     lcd->swap = lcd_aworks_swap;
   }
