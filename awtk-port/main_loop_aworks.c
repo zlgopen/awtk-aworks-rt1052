@@ -115,6 +115,7 @@ extern uint32_t* aworks_get_offline_fb(void);
 extern aw_emwin_fb_info_t* aworks_get_fb(void);
 extern int aworks_get_fb_size();
 static lcd_flush_t s_lcd_flush_default = NULL;
+static lcd_begin_frame_t s_lcd_begin_frame_default = NULL;
 
 static ret_t lcd_aworks_fb_flush(lcd_t* lcd) {
 #if 0  // 是否等待垂直同步
@@ -154,6 +155,9 @@ static ret_t lcd_aworks_begin_frame(lcd_t* lcd, rect_t* dirty_rect) {
 #endif
   }
 
+  if(s_lcd_begin_frame_default != NULL) {
+    return s_lcd_begin_frame_default(lcd, dirty_rect);
+  }
   return RET_OK;
 }
 
@@ -179,6 +183,7 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
     lcd->flush = lcd_aworks_fb_flush;
 
     // 使用swap机制(正常屏幕方向进入swap流程)
+    s_lcd_begin_frame_default = lcd->begin_frame;
     lcd->begin_frame = lcd_aworks_begin_frame;
     lcd->swap = lcd_aworks_swap;
   }
@@ -295,6 +300,10 @@ static ret_t lcd_aworks_begin_frame(lcd_t* lcd, rect_t* dirty_rect) {
     (void)mem;
     s_dirty_offline = NULL; // 新的一帧开始绘制
   }
+
+  if(s_lcd_begin_frame_default != NULL) {
+    return s_lcd_begin_frame_default(lcd, dirty_rect);
+  }
   return RET_OK;
 }
 
@@ -327,6 +336,7 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
     lcd->flush = lcd_aworks_fb_flush;
 
     // 使用swap机制(正常屏幕方向进入swap流程)
+    s_lcd_begin_frame_default = lcd->begin_frame;
     lcd->begin_frame = lcd_aworks_begin_frame;
     lcd->swap = lcd_aworks_swap;
   }
