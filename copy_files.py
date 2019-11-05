@@ -129,6 +129,7 @@ copyAwtkFile('src/native_window/native_window_raw.c', 'awtk/src/native_window/na
 copyAwtkFile('src/native_window/native_window_raw.h', 'awtk/src/native_window/native_window_raw.h')
 copyAwtkFile('src/window_manager/window_manager_default.c', 'awtk/src/window_manager/window_manager_default.c')
 copyAwtkFile('src/window_manager/window_manager_default.h', 'awtk/src/window_manager/window_manager_default.h')
+copyAwtkFile('src/graphic_buffer/graphic_buffer_default.c', 'awtk/src/graphic_buffer/graphic_buffer_default.c')
 
 if VGCANVAS == 'NANOVG' and (NANOVG_BACKEND == 'AGG' or NANOVG_BACKEND == 'AGGE'):
     copyAwtkFile('src/vgcanvas/vgcanvas_nanovg_soft.c', 'awtk/src/vgcanvas/vgcanvas_nanovg_soft.c')
