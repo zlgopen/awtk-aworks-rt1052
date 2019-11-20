@@ -43,6 +43,7 @@ static ret_t date_time_get_now_impl(date_time_t* dt) {
     dt->day = t.tm_mday;
     dt->month = t.tm_mon + 1;
     dt->year = t.tm_year + 1900;
+    dt->wday = t.tm_wday;
   } else {
     dt->second = 0;
     dt->minute = 0;
@@ -50,6 +51,7 @@ static ret_t date_time_get_now_impl(date_time_t* dt) {
     dt->day = 11;
     dt->month = 11;
     dt->year = 2018;
+    dt->wday = 0;
   }
 
   return RET_OK;
@@ -70,6 +72,7 @@ static ret_t date_time_get_now_impl(date_time_t* dt) {
     dt->day = t->tm_mday;
     dt->month = t->tm_mon + 1;
     dt->year = t->tm_year + 1900;
+    dt->wday = t->tm_wday;
   } else {
     dt->second = 0;
     dt->minute = 0;
@@ -77,6 +80,7 @@ static ret_t date_time_get_now_impl(date_time_t* dt) {
     dt->day = 11;
     dt->month = 11;
     dt->year = 2018;
+    dt->wday = 0;
   }
 
   return RET_OK;
