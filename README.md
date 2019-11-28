@@ -25,7 +25,7 @@ VGCANVAS = 'NANOVG'
 NANOVG_BACKEND = 'AGGE'
 ```
 
-#### 1.3 生成源文件或 lib
+#### 1.3 生成源文件和 lib
 
 ##### 1.3.1 执行 copy\_files.py
 
@@ -48,7 +48,7 @@ python copy_files.py
 python build_lib.py
 ```
 
-完成后，会在 output/lib 文件夹下生成相应的库文件。如果执行失败，可能需要修改 build_lib.py 编译器路径。
+完成后，会在 output/lib 文件夹下生成相应的库文件。如果执行失败，可能需要修改 build_lib.py 编译器路径，修改方法见文档 [BUILDLIB.md](BUILDLIB.md)
 
 #### 1.4 添加预定义宏
 
