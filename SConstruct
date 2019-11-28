@@ -26,52 +26,6 @@ def run_external_cmd_and_get_stderr_line_list(cmd_argv_list,error_str,cwd=None):
         sz_lines.append(sz.decode(sys.getdefaultencoding() ) );
     return sz_lines;
 
-def tool_set_arm_none_eabi_ar_with_lto_plugin(env):
-    
-    gcc_version_cmd_list = [u'arm-none-eabi-gcc',u'-v'];
-    sz_lines = run_external_cmd_and_get_stderr_line_list(gcc_version_cmd_list,u'no arm-none-eabi-gcc');
-
-    find_string = 'COLLECT_LTO_WRAPPER=';
-    lto_wapper_path = '';
-    for sz in sz_lines:
-        if sz.startswith(find_string):
-            lto_wapper_path =  sz[len(find_string):]
-            break;
-    if 0 == len(lto_wapper_path):
-        error_exit(u'no lto wapper path');
-
-    if lto_wapper_path.endswith( u'\r\n') :
-        lto_wapper_path=lto_wapper_path[0:-2]
-    elif lto_wapper_path.endswith( u'\n'):
-        lto_wapper_path=lto_wapper_path[0:-1]
-    elif lto_wapper_path.endswith( u'\r'):
-        lto_wapper_path=lto_wapper_path[0:-1]
-
-    
-    temp = lto_wapper_path;
-    i = 0;
-    lto_wapper_path = u"";
-    while i < len(temp):
-        if u'\\' == temp[i]:
-            if u' ' == temp[i + 1] :
-                lto_wapper_path += u' ';
-            elif u'\\' == temp[i + 1]:
-                lto_wapper_path += u'\\';
-            else :
-                error_exit(u' no lto wapper_path');
-            i += 2;
-        else :
-            lto_wapper_path += temp[i];
-            i += 1;
-
-    lto_wapper_path = os.path.realpath(lto_wapper_path);
-    lto_wapper_dir = os.path.split(lto_wapper_path)[0];
-    lto_ar_plugin_path = os.path.join(lto_wapper_dir,u'liblto_plugin-0.dll');
-    pulgin_string = u'--plugin \"' + lto_ar_plugin_path + u'\"'
-
-    env['ARFLAGS']     = u'rcPv ' + pulgin_string
-    env['RANLIBFLAGS'] = pulgin_string;
-
 def windows_cmd_str_to_cmd_list(cmd_str):
     maohao_count = 0;
     cmd_list = [];
@@ -165,15 +119,15 @@ def tool_add_merge_lib(env):
     tool_merge_lib = Builder(action=mergelib_function)
     env.Append(BUILDERS = {'merge_lib' : tool_merge_lib})
 
-def mk_gcc_environment():
+def mk_gcc_environment(gcc_prefix):
     env = DefaultEnvironment(tools = ['as','gcc','g++','ar','gnulink'],
         ENV = {'PATH' : os.environ['PATH']},
-        CC= u'arm-none-eabi-gcc',
-        AR= u'arm-none-eabi-ar',
-        RANLIB= u'arm-none-eabi-ranlib',
-        AS= u'arm-none-eabi-gcc -c',
-        CXX= u'arm-none-eabi-g++',
-        LINK=u'arm-none-eabi-gcc',)
+        CC= gcc_prefix + 'gcc',
+        AR= gcc_prefix + 'ar',
+        RANLIB= gcc_prefix + 'ranlib',
+        AS= gcc_prefix + 'gcc -c',
+        CXX= gcc_prefix + 'g++',
+        LINK=gcc_prefix + 'gcc',)
 
     if ARGUMENTS.get('VERBOSE') != "1" :
         env['CCCOMSTR'] = u"GCC $SOURCE"
@@ -187,6 +141,7 @@ def mk_gcc_environment():
     CPU_FLAGS += ' -mfloat-abi=' + 'hard'
     CPU_FLAGS += ' -mfpu=' + 'fpv5-d16'
     CPU_FLAGS += ' -mno-unaligned-access'
+    #CPU_FLAGS += ' -fno-short-enums'
     ###########################################################################################################
     DEBUG_FLAGS = ' -g3 -gdwarf-2 '
     ###########################################################################################################
@@ -205,8 +160,8 @@ def mk_gcc_environment():
     env['CXXFLAGS'] =AWTK_CFLAGS
 
     tool_add_merge_lib(env)
-    env['ARFLAGS']     = u'rcPv '
-    env['RANLIBFLAGS'] = u''
+    env['ARFLAGS']     = 'rcPv '
+    env['RANLIBFLAGS'] = ''
     #tool_set_arm_none_eabi_ar_with_lto_plugin(env)
 
     return env
@@ -244,7 +199,7 @@ def mk_armcc_environment():
 
 ###########################################################################################################
 if ARGUMENTS.get('COMPILER_TOOLS') == 'gcc':
-  env = mk_gcc_environment()
+  env = mk_gcc_environment(ARGUMENTS.get('GCC_PREFIX'))
 elif ARGUMENTS.get('COMPILER_TOOLS') == 'armcc':
   env = mk_armcc_environment()
 
