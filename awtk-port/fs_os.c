@@ -139,7 +139,7 @@ static ret_t fs_os_dir_read(fs_dir_t* dir, fs_item_t* item) {
   	return_value_if_fail(aw_stat(item_path, &st) == AW_OK, RET_FAIL);
 
     item->is_dir = S_ISDIR(st.st_mode);
-    item->is_file = S_ISREG(st.st_mode);
+    item->is_reg_file = S_ISREG(st.st_mode);
     tk_strncpy(item->name, entry->d_name, MAX_PATH);
     return RET_OK;
   } else {
