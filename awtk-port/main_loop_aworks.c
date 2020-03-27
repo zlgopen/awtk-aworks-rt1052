@@ -157,6 +157,8 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
                                     (uint8_t*) aw_fb_get_offline_buf(p_fb));
 
   if (lcd != NULL) {
+/* 如果开启 WITH_THREE_FB, 则不支持 tk_set_lcd_orientation 旋转屏幕 */
+#ifdef WITH_THREE_FB
     if (aworks_get_fb_number() > 2) {
       /* 三缓冲模式 */
       lcd->swap = lcd_aworks_swap_async;
@@ -166,6 +168,7 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
       lcd->swap = lcd_aworks_swap_sync;
       lcd->support_dirty_rect = 1;
     }
+#endif // WITH_THREE_FB
   }
 
   return lcd;

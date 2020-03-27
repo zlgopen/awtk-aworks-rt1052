@@ -85,12 +85,6 @@
 #define WITH_THREE_FB 1
 
 /**
- * 如果FLASH空间较小，不足以放大字体文件时，请定义本宏
- *
- */
-#define WITH_MINI_FONT 1
-
-/**
  * 如果启用VGCANVAS，而且没有OpenGL硬件加速，请定义本宏
  *
  */
@@ -112,7 +106,7 @@
 #define LCD_W 480
 #define LCD_H 272
 #else
-//"not supported"
+#error "LCD not supported"
 #endif
 #endif
  
