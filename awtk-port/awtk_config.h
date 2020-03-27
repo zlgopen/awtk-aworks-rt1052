@@ -91,10 +91,9 @@
 #define WITH_NANOVG_AGGE 1
 
 /**
- * 识别当前使用的屏幕分辨率，定义宏 LCD_W LCD_H
+ * 识别AWorksOS当前配置的屏幕分辨率，定义宏 LCD_W LCD_H
  *
  */
-#ifdef AW_DEBUG
 #include "aw_prj_params.h"
 #if defined(AW_DEV_HW480272F)
 #define LCD_W 480
@@ -107,7 +106,6 @@
 #define LCD_H 272
 #else
 #error "LCD not supported"
-#endif
 #endif
  
 #endif/*AWTK_CONFIG_H*/
