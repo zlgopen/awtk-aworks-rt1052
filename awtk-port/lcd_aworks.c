@@ -30,25 +30,22 @@
 #include "aw_prj_params.h"
 #include "base/types_def.h"
 
-static uint32_t *s_frame_buffer = 0;
-static uint32_t *s_offline_frame_buffer = 0;
+
 static void     *s_awtk_fb = NULL;
-static int s_fb_size = 0;
+static int       s_fb_size = 0;
+static int       s_fb_number = 0;
 
-uint32_t* aworks_get_online_fb(void) {
-  return s_frame_buffer;
-}
-
-uint32_t* aworks_get_offline_fb(void) {
-  return s_offline_frame_buffer;
-}
 
 void* aworks_get_fb(void) {
   return s_awtk_fb;
 }
 
-int aworks_get_fb_size() {
+int aworks_get_fb_size(void) {
   return s_fb_size;
+}
+
+int aworks_get_fb_number(void) {
+  return s_fb_number;
 }
 
 void* aworks_lcd_init(void) {
@@ -67,13 +64,10 @@ void* aworks_lcd_init(void) {
   aw_fb_init(s_awtk_fb);
 
   aw_fb_ioctl(s_awtk_fb, AW_FB_CMD_GET_FINFO, &fix_info);
-
   s_fb_size              = fix_info.buffer_size;
-  s_frame_buffer         = (uint32_t *)(fix_info.vram_addr);
-  s_offline_frame_buffer = (uint32_t *)(fix_info.vram_addr) + \
-                           aworks_get_fb_size() / 4;
+  s_fb_number            = fix_info.buffer_num;
+  
   aw_fb_start(s_awtk_fb);
-
   aw_fb_backlight(s_awtk_fb, 100);
 
   return s_awtk_fb;
