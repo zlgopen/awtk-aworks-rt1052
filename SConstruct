@@ -207,7 +207,7 @@ AWTK_LIB_NAME =ARGUMENTS.get('AWTK_LIB_NAME')
 
 
 
-env['CPPDEFINES'] = ['HAS_AWTK_CONFIG', 'HAVE_CONFIG_H']
+env['CPPDEFINES'] = ['HAS_AWTK_CONFIG', '__BUILDING_AWTK_LIB__']
 
 AWTK_COMMON_INCLUDE=['./output/awtk/src']
 AWTK_COMMON_INCLUDE.append( './output/awtk/src/ext_widgets' )

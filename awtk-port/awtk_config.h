@@ -94,12 +94,14 @@
  * 识别AWorksOS当前配置的屏幕分辨率，定义宏 LCD_W LCD_H
  *
  */
-#include "aw_prj_params.h"
-#if defined(SYS_LCD_X_RES) && defined(SYS_LCD_Y_RES)
-#define LCD_W SYS_LCD_X_RES
-#define LCD_H SYS_LCD_Y_RES
-#else
-#error "aw_prj_params.h SYS_LCD_X_RES and SYS_LCD_Y_RES not defined"
-#endif
+#ifndef __BUILDING_AWTK_LIB__
+  #include "aw_prj_params.h"
+  #if defined(SYS_LCD_X_RES) && defined(SYS_LCD_Y_RES)
+    #define LCD_W SYS_LCD_X_RES
+    #define LCD_H SYS_LCD_Y_RES
+  #else
+    #error "aw_prj_params.h SYS_LCD_X_RES and SYS_LCD_Y_RES not defined"
+  #endif
+#endif // __BUILDING_AWTK_LIB__
  
 #endif/*AWTK_CONFIG_H*/
