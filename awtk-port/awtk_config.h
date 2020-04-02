@@ -95,17 +95,11 @@
  *
  */
 #include "aw_prj_params.h"
-#if defined(AW_DEV_HW480272F)
-#define LCD_W 480
-#define LCD_H 272
-#elif defined(AW_DEV_HW800480F)
-#define LCD_W 800
-#define LCD_H 480
-#elif defined(AW_DEV_HWCAP480272F)
-#define LCD_W 480
-#define LCD_H 272
+#if defined(SYS_LCD_X_RES) && defined(SYS_LCD_Y_RES)
+#define LCD_W SYS_LCD_X_RES
+#define LCD_H SYS_LCD_Y_RES
 #else
-#error "LCD not supported"
+#error "aw_prj_params.h SYS_LCD_X_RES and SYS_LCD_Y_RES not defined"
 #endif
  
 #endif/*AWTK_CONFIG_H*/
