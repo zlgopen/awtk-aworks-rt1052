@@ -91,6 +91,12 @@
 #define WITH_NANOVG_AGGE 1
 
 /**
+ * 关闭联想输入法，避免编译超出RT1052-AWorks上的代码段4088K
+ *
+ */
+#define WITHOUT_SUGGEST_WORDS 1
+
+/**
  * 识别AWorksOS当前配置的屏幕分辨率，定义宏 LCD_W LCD_H
  *
  */
