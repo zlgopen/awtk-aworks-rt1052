@@ -91,9 +91,11 @@
 #define WITH_NANOVG_AGGE 1
 
 /**
- * 关闭联想输入法，避免编译超出RT1052-AWorks上的代码段4088K
+ * 按新awtk加入pinyin输入法开关
+ * 并关闭联想输入法，避免编译超出RT1052-AWorks上的代码段4088K
  *
  */
+#define WITH_IME_PINYIN 1
 #define WITHOUT_SUGGEST_WORDS 1
 
 /**
