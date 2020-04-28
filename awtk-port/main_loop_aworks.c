@@ -206,7 +206,8 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
     } else {
       /* 单缓冲或双缓冲模式（VRAM不足三缓冲） */
       lcd->support_dirty_rect = 1;
-      lcd->swap = lcd_aworks_swap_sync;
+      lcd->swap = NULL;
+      assert(lcd->flush); // swap=NULL则使用默认的flush方法
     }
   }
 #endif // WITH_THREE_FB
