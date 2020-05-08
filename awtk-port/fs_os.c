@@ -49,17 +49,19 @@ static ret_t fs_os_file_close(fs_file_t* file) {
   return RET_OK;
 }
 
+static const fs_file_vtable_t s_fs_file_vtable_t = {.read = fs_os_file_read,
+                                                    .write = fs_os_file_write,
+                                                    .seek = fs_os_file_seek,
+                                                    .truncate = fs_os_file_truncate,
+                                                    .close = fs_os_file_close};
+
 static fs_file_t* fs_file_create(int fd) {
   fs_file_t* f = NULL;
   return_value_if_fail(fd >= 0, NULL);
 
   f = TKMEM_ZALLOC(fs_file_t);
   if (f != NULL) {
-    f->read = fs_os_file_read;
-    f->write = fs_os_file_write;
-    f->seek = fs_os_file_seek;
-    f->truncate = fs_os_file_truncate;
-    f->close = fs_os_file_close;
+    f->vt = &s_fs_file_vtable_t;
     f->data = (void*)fd;
   } else {
     aw_close(fd);
@@ -164,16 +166,18 @@ static ret_t fs_os_dir_close(fs_dir_t* dir) {
   return RET_OK;
 }
 
+static const fs_dir_vtable_t s_fs_dir_vtable_t = {.read = fs_os_dir_read,
+                                                  .rewind = fs_os_dir_rewind,
+                                                  .close = fs_os_dir_close};
+
 static fs_dir_t* fs_dir_create(struct aw_dir* dir, const char* dir_name) {
   fs_dir_t* d = NULL;
   return_value_if_fail(dir != NULL, NULL);
 
   struct fs_dir_ex* d_ex = TKMEM_ZALLOC(struct fs_dir_ex);
   if (d_ex != NULL) {
-  	d = &d_ex->dir;
-    d->read = fs_os_dir_read;
-    d->rewind = fs_os_dir_rewind;
-    d->close = fs_os_dir_close;
+    d = &d_ex->dir;
+    d->vt = &s_fs_dir_vtable_t;
     d->data = dir;
     tk_strncpy(d_ex->dir_name, dir_name, MAX_PATH);
   } else {
