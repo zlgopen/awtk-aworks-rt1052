@@ -146,6 +146,8 @@ LCD_FILES=['lcd_mem.h',
     'lcd_mem_rgba8888.c',
     'lcd_mem_bgra8888.h',
     'lcd_mem_bgra8888.c',
+    'lcd_mem_rgb565.h',
+    'lcd_mem_rgb565.c',
     'lcd_mem_bgr565.h',
     'lcd_mem_bgr565.c']
 for f in LCD_FILES:
