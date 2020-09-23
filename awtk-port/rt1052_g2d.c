@@ -380,8 +380,8 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, const rect_t* dst, const rect
 
 ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, const rect_t* src_const, lcd_orientation_t o)
 {
-	rect_t  src_temp = *src_const;
-	rect_t* src = &src_temp;
+    rect_t  src_temp = *src_const;
+    rect_t* src = &src_temp;
 
     uint8_t* fb_data = NULL;
     uint8_t* img_data = NULL;
