@@ -11,7 +11,7 @@
 
 
 
-ret_t g2d_fill_rect(bitmap_t* fb, rect_t* dst, color_t c)
+ret_t g2d_fill_rect(bitmap_t* fb, const rect_t* dst, color_t c)
 {
     uint8_t* fb_data = NULL;
     //暂时不用，效率不及软件实现
@@ -69,7 +69,7 @@ ret_t g2d_fill_rect(bitmap_t* fb, rect_t* dst, color_t c)
 }
 
 
-ret_t g2d_copy_image(bitmap_t* fb, bitmap_t* img, rect_t* src, xy_t dx, xy_t dy)
+ret_t g2d_copy_image(bitmap_t* fb, bitmap_t* img, const rect_t* src, xy_t dx, xy_t dy)
 {
     uint8_t* fb_data = NULL;
     uint8_t* img_data = NULL;
@@ -148,7 +148,7 @@ ret_t g2d_copy_image(bitmap_t* fb, bitmap_t* img, rect_t* src, xy_t dx, xy_t dy)
 }
 
 
-ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uint8_t global_alpha)
+ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, const rect_t* dst, const rect_t* src, uint8_t global_alpha)
 {
     uint8_t* fb_data = NULL;
     uint8_t* img_data = NULL;
@@ -378,8 +378,11 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, rect_t* dst, rect_t* src, uin
 
 
 
-ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, rect_t* src, lcd_orientation_t o)
+ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, const rect_t* src_const, lcd_orientation_t o)
 {
+	rect_t  src_temp = *src_const;
+	rect_t* src = &src_temp;
+
     uint8_t* fb_data = NULL;
     uint8_t* img_data = NULL;
     assert(src->x >= 0);
