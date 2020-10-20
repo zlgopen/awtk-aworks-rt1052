@@ -49,8 +49,6 @@ int aworks_get_fb_number(void) {
 }
 
 void* aworks_lcd_init(void) {
-  aw_fb_fix_info_t fix_info;
-
 #ifdef WITH_PXP_G2D
 // add AW_DEV_IMX1050_PXP check for compatible with aworks sdk v1.0.5 and v1.0.4
 #ifndef AW_DEV_IMX1050_PXP
@@ -63,9 +61,18 @@ void* aworks_lcd_init(void) {
 
   aw_fb_init(s_awtk_fb);
 
+// add AW_FB_VERSIONS_N1 check for compatible with aworks sdk v2.1.0 and v2.2.0
+#ifdef AW_FB_VERSIONS_N1
+  aw_fb_var_info_t var_info;
+  aw_fb_ioctl(s_awtk_fb, AW_FB_CMD_GET_VINFO, &var_info);
+  s_fb_size              = var_info.buffer.buffer_size;
+  s_fb_number            = var_info.buffer.buffer_num;
+#else
+  aw_fb_fix_info_t fix_info;
   aw_fb_ioctl(s_awtk_fb, AW_FB_CMD_GET_FINFO, &fix_info);
   s_fb_size              = fix_info.buffer_size;
   s_fb_number            = fix_info.buffer_num;
+#endif
   
   aw_fb_start(s_awtk_fb);
   aw_fb_backlight(s_awtk_fb, 100);

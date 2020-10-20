@@ -104,3 +104,7 @@ ret_t tk_thread_destroy(tk_thread_t* thread)
 
     return RET_OK;
 }
+
+uint64_t tk_thread_self(void) {
+  return (uint64_t)aw_task_id_self();
+}
