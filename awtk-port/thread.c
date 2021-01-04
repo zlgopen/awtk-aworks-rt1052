@@ -80,6 +80,7 @@ ret_t tk_thread_join(tk_thread_t* thread)
     return_value_if_fail(thread != NULL, RET_BAD_PARAMS);
 
     if (aw_task_join(thread->id, &thread->status) == AW_OK) {
+        thread->running = FALSE;
         return RET_OK;
     } else {
         return RET_FAIL;

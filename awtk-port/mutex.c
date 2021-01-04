@@ -1,7 +1,7 @@
 /**
  * File:   mutex.c
  * Author: AWTK Develop Team
- * Brief:  mutex do nothing
+ * Brief:  mutex
  *
  * Copyright (c) 2018 - 2018  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
@@ -29,17 +29,22 @@ struct _tk_mutex_t {
 
 //static tk_mutex_t s_tk_mutex_null;
 
-tk_mutex_t* tk_mutex_create() {
-  tk_mutex_t* mutex = (tk_mutex_t*)aw_mem_alloc(sizeof(tk_mutex_t));
+tk_mutex_t* tk_mutex_create(void) {
+  tk_mutex_t* mutex = (tk_mutex_t*)aw_mem_calloc(1, sizeof(tk_mutex_t));
+
   if (mutex) {
-  	AW_MUTEX_INIT(mutex->__lock, AW_SEM_INVERSION_SAFE);
+    if (NULL == AW_MUTEX_INIT(mutex->__lock, AW_SEM_INVERSION_SAFE)) {
+      aw_mem_free(mutex);
+      return NULL;
+    }
   }
+
   return mutex;
 }
 
 ret_t tk_mutex_lock(tk_mutex_t* mutex) {
-	assert(mutex);
-	aw_err_t err = AW_MUTEX_LOCK( mutex->__lock, AW_SEM_WAIT_FOREVER );
+  assert(mutex);
+  aw_err_t err = AW_MUTEX_LOCK( mutex->__lock, AW_SEM_WAIT_FOREVER );
 
   switch (err) {
     case AW_OK: return RET_OK;
@@ -48,8 +53,8 @@ ret_t tk_mutex_lock(tk_mutex_t* mutex) {
 }
 
 ret_t tk_mutex_unlock(tk_mutex_t* mutex) {
-	assert(mutex);
-	aw_err_t err = AW_MUTEX_UNLOCK( mutex->__lock );
+  assert(mutex);
+  aw_err_t err = AW_MUTEX_UNLOCK( mutex->__lock );
 
   switch (err) {
     case AW_OK: return RET_OK;
@@ -58,9 +63,9 @@ ret_t tk_mutex_unlock(tk_mutex_t* mutex) {
 }
 
 ret_t tk_mutex_destroy(tk_mutex_t* mutex) {
-	assert(mutex);
-	AW_MUTEX_TERMINATE( mutex->__lock );
+  assert(mutex);
+  AW_MUTEX_TERMINATE( mutex->__lock );
 
-	aw_mem_free(mutex);
+  aw_mem_free(mutex);
   return RET_OK;
 }
