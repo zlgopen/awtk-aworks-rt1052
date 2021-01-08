@@ -49,11 +49,35 @@ ret_t tk_thread_set_stack_size(tk_thread_t* thread, uint32_t stack_size)
 
     return RET_OK;
 }
-ret_t tk_thread_set_priority(tk_thread_t* thread, uint32_t priority)
+
+int32_t tk_thread_get_priority_from_platform(tk_thread_priority_t priority) {
+    int32_t lowest_priority = aw_task_lowest_priority();
+    int32_t priority_count = aw_task_priority_count();
+    ENSURE(priority_count > TK_THREAD_PRIORITY_TIME_CRITICAL);
+    switch (priority)
+    {
+    case TK_THREAD_PRIORITY_TIME_CRITICAL :
+        return lowest_priority - 6;
+    case TK_THREAD_PRIORITY_HIGHEST :
+        return lowest_priority - 5;
+    case TK_THREAD_PRIORITY_ABOVE_NORAML :
+        return lowest_priority - 4;
+    case TK_THREAD_PRIORITY_NORMAL :
+        return lowest_priority - 3;
+    case  TK_THREAD_PRIORITY_BELOW_NORAML:
+        return lowest_priority - 2;
+    case TK_THREAD_PRIORITY_LOWEST :
+        return lowest_priority - 1;
+    default:
+        return lowest_priority;
+    }
+}
+
+ret_t tk_thread_set_priority(tk_thread_t* thread, tk_thread_priority_t priority)
 {
     return_value_if_fail(thread != NULL, RET_BAD_PARAMS);
 
-    thread->priority = priority;
+    thread->priority = tk_thread_get_priority_from_platform(priority);
 
     return RET_OK;
 }

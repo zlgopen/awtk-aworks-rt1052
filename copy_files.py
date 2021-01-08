@@ -125,6 +125,7 @@ copyAwtkFile('src/awtk_global.c', 'awtk/src/awtk_global.c')
 copyAwtkFile('src/awtk_global.h', 'awtk/src/awtk_global.h')
 copyAwtkFile('src/awtk_widgets.h', 'awtk/src/awtk_widgets.h')
 copyAwtkFile('src/awtk_ext_widgets.h', 'awtk/src/awtk_ext_widgets.h')
+copyAwtkFile('src/fscript_ext/fscript_ext.h', 'awtk/src/fscript_ext/fscript_ext.h')
 copyAwtkFile('src/native_window/native_window_raw.c', 'awtk/src/native_window/native_window_raw.c')
 copyAwtkFile('src/native_window/native_window_raw.h', 'awtk/src/native_window/native_window_raw.h')
 copyAwtkFile('src/window_manager/window_manager_default.c', 'awtk/src/window_manager/window_manager_default.c')
@@ -156,6 +157,8 @@ for f in LCD_FILES:
     copyAwtkFile(sfilename, dfilename)
 
 INPUT_METHODS_FILES=['input_engines/input_engine_pinyin.cpp',
+    'input_engines/ime_utils.c',
+    'input_engines/ime_utils.h',
     'input_methods/input_method_creator.c',
     'input_methods/input_method_default.inc',
     'input_methods/input_method_null.inc',
