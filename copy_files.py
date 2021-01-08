@@ -177,20 +177,4 @@ for f in MAIN_LOOP_FILES:
     copyAwtkFile(sfilename, dfilename)
 
 
-copyAwtkFiles('demos/assets', 'awtk-demos/assets')
-
-DEMO_FILES=['assets.h',
-    'assets.c',
-    'demo_main.c',
-    'demo_ui_app.c',
-    'common.inc',
-    'vg_common.inc']
-for f in DEMO_FILES:
-    sfilename=os.path.join('demos', f);
-    dfilename=os.path.join('awtk-demos/', f);
-    copyAwtkFile(sfilename, dfilename)
-
-
 copyPortFiles('awtk-port', 'awtk-port')
-# copyPortFiles('pxp', 'pxp')
-# copyPortFile('user_code/main.c', 'awtk-demos/main.c')	
