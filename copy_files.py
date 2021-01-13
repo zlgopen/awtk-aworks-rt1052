@@ -101,6 +101,7 @@ else:
     assert 0, " VGCANVAS != {NANOVG, CAIRO} and NANOVG_BACKEND != {AGG, AGGE}"
 
 
+copyAwtkFiles('docs', 'awtk/docs')
 copyAwtkFiles('src/xml', 'awtk/src/xml')
 copyAwtkFiles('src/svg', 'awtk/src/svg')
 copyAwtkFiles('src/tkc', 'awtk/src/tkc')
