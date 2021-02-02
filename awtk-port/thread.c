@@ -24,7 +24,7 @@ tk_thread_t* tk_thread_create(tk_thread_entry_t entry, void* args)
     tk_thread_t* thread = (tk_thread_t*)TKMEM_ZALLOC(tk_thread_t);
     return_value_if_fail(thread != NULL, NULL);
 
-
+    thread->id         = AW_TASK_ID_INVALID;
     thread->args       = args;
     thread->entry      = entry;
     thread->name       = "tk_thread";
@@ -103,7 +103,8 @@ ret_t tk_thread_join(tk_thread_t* thread)
 {
     return_value_if_fail(thread != NULL, RET_BAD_PARAMS);
 
-    if (aw_task_join(thread->id, &thread->status) == AW_OK) {
+    if (!aw_task_valid(thread->id) || aw_task_join(thread->id, &thread->status) == AW_OK) {
+        thread->id = AW_TASK_ID_INVALID;
         thread->running = FALSE;
         return RET_OK;
     } else {
