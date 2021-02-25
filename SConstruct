@@ -166,6 +166,8 @@ def mk_gcc_environment(gcc_prefix):
 
     return env
 
+###########################################################################################################
+
 def mk_armcc_environment():
   env = DefaultEnvironment(
     tools = ['as','cc','cc','ar','link'],
@@ -198,10 +200,45 @@ def mk_armcc_environment():
     return env
 
 ###########################################################################################################
+
+def mk_armclang_environment():
+  env = DefaultEnvironment(
+    tools = ['as','cc','cc','ar','link'],
+    ENV = {'PATH' : os.environ['PATH']},
+    CC='armclang',
+    AR='armar',
+    LIBPREFIX='',
+    LIBSUFFIX=".lib",
+    CXX='armclang',    
+    ARFLAGS = '-r -c -s --create',
+    OBJSUFFIX = '.o',
+    CXXCOM = '$CXX -o $TARGET -c $CXXFLAGS $CCFLAGS $_CCCOMCOM $SOURCES',)
+  
+  if ARGUMENTS.get('VERBOSE') != "1" :
+    env['CCCOMSTR'] = u"CC $SOURCE"
+    env['CXXCOMSTR'] = u"CXX $SOURCE"
+    env['ARCOMSTR'] = u"AR $TARGET"  
+
+    env['CFLAGS'] = ' -std=c99 '
+    env['CCFLAGS'] = ' --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -fshort-enums -fshort-wchar -gdwarf-3 -O3 '
+    # env['CXXFLAGS'] = '--cpp'
+
+    import SCons.Tool
+    import SCons.Defaults
+
+    static_obj, shared_obj = SCons.Tool.createObjBuilders(env)
+    suffix = '.cpp'
+    static_obj.add_action(suffix, SCons.Defaults.CXXAction)
+
+    return env
+
+###########################################################################################################
 if ARGUMENTS.get('COMPILER_TOOLS') == 'gcc':
   env = mk_gcc_environment(ARGUMENTS.get('GCC_PREFIX'))
 elif ARGUMENTS.get('COMPILER_TOOLS') == 'armcc':
   env = mk_armcc_environment()
+elif ARGUMENTS.get('COMPILER_TOOLS') == 'armclang':
+  env = mk_armclang_environment()
 
 AWTK_LIB_NAME =ARGUMENTS.get('AWTK_LIB_NAME')
 
@@ -248,4 +285,6 @@ for i in range(0,len(__all_file),100):
 if ARGUMENTS.get('COMPILER_TOOLS') == 'gcc':
   env.merge_lib(AWTK_LIB_NAME,all_lib)
 if ARGUMENTS.get('COMPILER_TOOLS') == 'armcc':
+  env.StaticLibrary(AWTK_LIB_NAME,all_lib)
+if ARGUMENTS.get('COMPILER_TOOLS') == 'armclang':
   env.StaticLibrary(AWTK_LIB_NAME,all_lib)
