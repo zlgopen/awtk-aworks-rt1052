@@ -8,17 +8,16 @@ GCC_PATH = r"D:\eclipse_neon_2016q3_x86\GNU Tools ARM Embedded\2016q3\bin;"
 ARMCC_PATH = r"C:\Keil_v5\ARM\ARMCC\bin;"
 #ARMCLANG_PATH = r"C:\Keil_v5\ARM\ARMCLANG\bin;"
 SCONS_RUN = r"scons.bat"
-SUFFIX = '.exe'
+EXE_SUFFIX = '.exe'
 
 #for linux
 #GCC_PREFIX = r"arm-none-eabi-"
 #GCC_PATH = r"/opt/arm-none-eabi/bin:"
 #ARMCC_PATH = r""
-ARMCLANG_PATH = r""
+#ARMCLANG_PATH = r""
 #SCONS_RUN = r"scons"
-#SUFFIX = ''
+#EXE_SUFFIX = ''
 
-#GCC_PATH = r""
 
 AWTK_GCC_LIB_NAME = 'libawtk_imx1050.a'
 AWTK_ARMCC_LIB_NAME = 'awtk_imx1050.lib'
@@ -85,7 +84,7 @@ def run_scons_for_armclang():
 
 def compiler_path_is_valid(path, compiler_name):
     is_valid = True
-    if path and not os.path.exists(os.path.join(path, compiler_name + SUFFIX)):
+    if path and not os.path.exists(os.path.join(path, compiler_name + EXE_SUFFIX)):
         print('\033[31m '+ 'error: ' + compiler_name + ' is not exist!' + ' \033[0m')
         is_valid = False
     return is_valid

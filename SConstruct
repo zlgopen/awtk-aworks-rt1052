@@ -186,18 +186,18 @@ def mk_armcc_environment():
     env['CXXCOMSTR'] = u"CXX $SOURCE"
     env['ARCOMSTR'] = u"AR $TARGET"  
 
-    env['CFLAGS'] = '--c99'
-    env['CCFLAGS'] = '--cpu=Cortex-M7.fp.dp --apcs=interwork --gnu -O3 -Ospace'
-    env['CXXFLAGS'] = '--cpp'
+  env['CFLAGS'] = '--c99'
+  env['CCFLAGS'] = '--cpu=Cortex-M7.fp.dp --apcs=interwork --gnu -O3 -Ospace'
+  env['CXXFLAGS'] = '--cpp'
 
-    import SCons.Tool
-    import SCons.Defaults
+  import SCons.Tool
+  import SCons.Defaults
 
-    static_obj, shared_obj = SCons.Tool.createObjBuilders(env)
-    suffix = '.cpp'
-    static_obj.add_action(suffix, SCons.Defaults.CXXAction)
+  static_obj, shared_obj = SCons.Tool.createObjBuilders(env)
+  suffix = '.cpp'
+  static_obj.add_action(suffix, SCons.Defaults.CXXAction)
 
-    return env
+  return env
 
 ###########################################################################################################
 
@@ -219,18 +219,18 @@ def mk_armclang_environment():
     env['CXXCOMSTR'] = u"CXX $SOURCE"
     env['ARCOMSTR'] = u"AR $TARGET"  
 
-    env['CFLAGS'] = ' -std=c99 '
-    env['CCFLAGS'] = ' --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -fshort-enums -fshort-wchar -gdwarf-3 -O3 '
-    # env['CXXFLAGS'] = '--cpp'
+  env['CFLAGS'] = ' -std=c99 '
+  env['CCFLAGS'] = ' --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -fshort-enums -fshort-wchar -gdwarf-3 -O3 '
+  # env['CXXFLAGS'] = '--cpp'
 
-    import SCons.Tool
-    import SCons.Defaults
+  import SCons.Tool
+  import SCons.Defaults
 
-    static_obj, shared_obj = SCons.Tool.createObjBuilders(env)
-    suffix = '.cpp'
-    static_obj.add_action(suffix, SCons.Defaults.CXXAction)
+  static_obj, shared_obj = SCons.Tool.createObjBuilders(env)
+  suffix = '.cpp'
+  static_obj.add_action(suffix, SCons.Defaults.CXXAction)
 
-    return env
+  return env
 
 ###########################################################################################################
 if ARGUMENTS.get('COMPILER_TOOLS') == 'gcc':
