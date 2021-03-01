@@ -6,7 +6,7 @@ import shutil
 GCC_PREFIX = r"arm-none-eabi-"
 GCC_PATH = r"D:\eclipse_neon_2016q3_x86\GNU Tools ARM Embedded\2016q3\bin;"
 ARMCC_PATH = r"C:\Keil_v5\ARM\ARMCC\bin;"
-#ARMCLANG_PATH = r"C:\Keil_v5\ARM\ARMCLANG\bin;"
+ARMCLANG_PATH = r""  #r"C:\Keil_v5\ARM\ARMCLANG\bin;"
 SCONS_RUN = r"scons.bat"
 EXE_SUFFIX = '.exe'
 
