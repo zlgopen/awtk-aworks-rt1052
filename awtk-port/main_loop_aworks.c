@@ -112,15 +112,7 @@ ret_t platform_disaptch_input(main_loop_t* loop) {
 /* frame buffer刷新操作                                                       */
 /*----------------------------------------------------------------------------*/
 
-/**
- * 三缓冲模式下, 是否限制帧率FPS
- *
- * 如果定义该宏，FPS将被限制在LCD的刷新率之内
- * 如果不定义该宏，GUI将不限制帧率，但CPU压力会变大
- */
-#ifndef THREE_FB_WITH_FPS_LIMITED
-#define THREE_FB_WITH_FPS_LIMITED 1
-#endif
+#define __FB_WAIT_VSYNC    1
 
 extern void* aworks_get_fb(void);
 extern int aworks_get_fb_number(void);
@@ -141,39 +133,6 @@ static ret_t lcd_aworks_swap_sync(lcd_t* lcd) {
 }
 
 /*----------------------------------------------------------------------------*/
-/* 异步交换方式，不等待垂直同步（不限制FPS）                                  */
-/*----------------------------------------------------------------------------*/
-
-static bool_t s_dirty_offline = FALSE;
-
-static ret_t lcd_aworks_swap_async(lcd_t* lcd) {
-  lcd_mem_t* mem = (lcd_mem_t*)lcd;
-  void     *p_fb = aworks_get_fb();
-
-  /* 异步缓冲区交换, 不等待 */
-  if (AW_OK == aw_fb_try_swap_buf(p_fb)) {
-    mem->offline_fb = (uint8_t*)aw_fb_get_offline_buf(p_fb);
-    s_dirty_offline = FALSE;
-  } else {
-    s_dirty_offline = TRUE;
-  }
-  return RET_OK;
-}
-
-static ret_t __swap_idle_entry(const idle_info_t* idle) {
-  void* p_fb = aworks_get_fb();
-  lcd_mem_t* mem = (lcd_mem_t*)idle->ctx;
-
-  if (s_dirty_offline) {
-    if (AW_OK == aw_fb_try_swap_buf(p_fb)) {
-      mem->offline_fb = (uint8_t*)aw_fb_get_offline_buf(p_fb);
-      s_dirty_offline = FALSE;
-    }
-  }
-  return RET_REPEAT;
-}
-
-/*----------------------------------------------------------------------------*/
 /* 双缓冲模式/三缓冲模式 根据aworks_get_fb_number自动切换                     */
 /*----------------------------------------------------------------------------*/
 
@@ -185,33 +144,18 @@ lcd_t* platform_create_lcd(wh_t w, wh_t h) {
    */
   assert(p_fb && aw_fb_get_online_buf(p_fb));
   assert(p_fb && aw_fb_get_offline_buf(p_fb));
-  
+
   lcd_t* lcd = lcd_mem_bgr565_create_double_fb(w,
                                                h,
                                     (uint8_t*) aw_fb_get_online_buf(p_fb),
                                     (uint8_t*) aw_fb_get_offline_buf(p_fb));
 
-#ifdef WITH_THREE_FB
+#if __FB_WAIT_VSYNC
   if (lcd != NULL) {
-    if (aworks_get_fb_number() > 2) {
-      /* 三缓冲模式，不支持脏矩形 */
-      lcd->support_dirty_rect = 0;
-      
-#if THREE_FB_WITH_FPS_LIMITED
-      lcd->swap = lcd_aworks_swap_sync;
-#else // THREE_FB_WITH_FPS_LIMITED
-      lcd->swap = lcd_aworks_swap_async;
-      idle_add(__swap_idle_entry, lcd);
-#endif // THREE_FB_WITH_FPS_LIMITED
-    } else {
-      /* 单缓冲或双缓冲模式（VRAM不足三缓冲） */
-      lcd->support_dirty_rect = 1;
-      lcd->swap = NULL;
-      assert(lcd->flush); // swap=NULL则使用默认的flush方法
-    }
+    lcd->support_dirty_rect = 0;
+    lcd->swap = lcd_aworks_swap_sync;
   }
-#endif // WITH_THREE_FB
-
+#endif // __FB_WAIT_VSYNC
   return lcd;
 }
 
