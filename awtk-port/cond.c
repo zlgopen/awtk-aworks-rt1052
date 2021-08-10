@@ -1,7 +1,7 @@
-/**
- * File:   semaphore.c
+﻿/**
+ * File:   cond.c
  * Author: AWTK Develop Team
- * Brief:  semaphore
+ * Brief:  cond
  *
  * Copyright (c) 2018 - 2018  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
@@ -22,7 +22,7 @@
 #include "aw_sem.h"
 #include "aw_mem.h"
 #include "tkc/mutex.h"
-#include "tkc/cond_var.h"
+#include "tkc/cond.h"
 
 struct _tk_cond_t {
   tk_mutex_t* lock;

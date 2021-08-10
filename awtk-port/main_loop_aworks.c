@@ -127,8 +127,8 @@ static ret_t lcd_aworks_swap_sync(lcd_t* lcd) {
 
   /* 交换缓冲带有垂直同步功能 */
   aw_fb_swap_buf(p_fb);
-  mem->offline_fb = (uint8_t*)aw_fb_get_offline_buf(p_fb);
-  mem->online_fb = (uint8_t*)aw_fb_get_online_buf(p_fb);
+  lcd_mem_set_offline_fb(mem, (uint8_t*)aw_fb_get_offline_buf(p_fb));
+  lcd_mem_set_online_fb(mem, (uint8_t*)aw_fb_get_online_buf(p_fb));
   return RET_OK;
 }
 
