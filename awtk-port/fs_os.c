@@ -42,7 +42,6 @@ static ret_t fs_os_file_truncate(fs_file_t* file, int32_t size) {
 
 static bool_t fs_os_file_eof(fs_file_t* file) {
   assert(file);
-  off_t seek = 0;
   int fd = (int)(file->data);
 
   return aw_lseek(fd, 0, SEEK_CUR) == fs_file_size(file) ? TRUE : FALSE;
@@ -50,7 +49,6 @@ static bool_t fs_os_file_eof(fs_file_t* file) {
 
 static int64_t fs_os_file_tell(fs_file_t* file) {
   assert(file);
-  off_t seek = 0;
   int fd = (int)(file->data);
 
   return aw_lseek(fd, 0, SEEK_CUR);
@@ -176,11 +174,11 @@ static bool_t fs_os_file_exist(fs_t* fs, const char* name) {
   return (aw_stat(name, &st) == 0 && S_ISREG(st.st_mode));
 }
 
-static bool_t fs_os_file_rename(fs_t* fs, const char* name, const char* new_name) {
+static ret_t fs_os_file_rename(fs_t* fs, const char* name, const char* new_name) {
   (void)fs;
   assert(name && new_name);
 
-  return (aw_rename(name, new_name) == AW_OK);
+  return aw_rename(name, new_name) == AW_OK ? RET_OK : RET_FAIL;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -292,11 +290,11 @@ static bool_t fs_os_dir_exist(fs_t* fs, const char* name) {
   return (aw_stat(name, &st) == AW_OK && S_ISDIR(st.st_mode));
 }
 
-static bool_t fs_os_dir_rename(fs_t* fs, const char* name, const char* new_name) {
+static ret_t fs_os_dir_rename(fs_t* fs, const char* name, const char* new_name) {
   (void)fs;
   assert(name && new_name);
 
-  return (aw_rename(name, new_name) == AW_OK);
+  return aw_rename(name, new_name) == AW_OK ? RET_OK : RET_FAIL;
 }
 
 /*----------------------------------------------------------------------------*/
