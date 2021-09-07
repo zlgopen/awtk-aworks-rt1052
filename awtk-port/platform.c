@@ -19,6 +19,7 @@
  *
  */
 
+#include "aw_int.h"
 #include "aw_system.h"
 #include "aw_delay.h"
 #include "base/timer.h"
@@ -88,7 +89,22 @@ static ret_t date_time_get_now_impl(date_time_t* dt) {
 #endif
 
 uint64_t get_time_ms64() {
-  return aw_sys_tick_get();
+  uint32_t tick = 0;
+  uint64_t time_ms64 = 0;
+  static volatile uint32_t g_last_tick = 0;
+  static volatile uint64_t g_tick64_base = 0;
+
+  AW_INT_CPU_LOCK_DECL(cpu_lock_key);
+  AW_INT_CPU_LOCK(cpu_lock_key);
+  tick = aw_sys_tick_get();
+  if (g_last_tick > tick) {
+    g_tick64_base += 0xFFFFFFFFu;
+    g_tick64_base += 1;
+  }
+  g_last_tick = tick;
+  time_ms64 = g_tick64_base + tick;
+  AW_INT_CPU_UNLOCK(cpu_lock_key);
+  return time_ms64;
 }
 
 void sleep_ms(uint32_t ms) {
