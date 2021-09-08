@@ -218,7 +218,6 @@ static ret_t fs_os_dir_read(fs_dir_t* dir, fs_item_t* item) {
 
 static ret_t fs_os_dir_rewind(fs_dir_t* dir) {
   assert(dir);
-  assert(!"fs_os_dir_rewind not supported yet");
 
   return RET_NOT_IMPL;
 }
@@ -331,7 +330,6 @@ static ret_t fs_os_get_disk_info(fs_t* fs, const char* volume, int32_t* free_kb,
 static ret_t fs_os_get_exe(fs_t* fs, char path[MAX_PATH + 1]) {
   (void)fs;
   (void)path;
-  assert(!"fs_os_get_exe not supported yet");
 
   return RET_NOT_IMPL;
 }
@@ -347,7 +345,6 @@ static ret_t fs_os_get_cwd(fs_t* fs, char path[MAX_PATH + 1]) {
 static ret_t fs_os_get_user_storage_path(fs_t* fs, char path[MAX_PATH + 1]) {
   (void)fs;
   (void)path;
-  assert(!"fs_os_get_user_storage_path not supported yet");
 
   return RET_NOT_IMPL;
 }
@@ -369,7 +366,6 @@ static ret_t fs_os_stat(fs_t* fs, const char* name, fs_stat_info_t* fst) {
 static ret_t fs_os_get_temp_path(fs_t* fs, char path[MAX_PATH + 1]) {
   (void)fs;
   (void)path;
-  assert(!"fs_os_get_user_storage_path not supported yet");
 
   return RET_NOT_IMPL;
 }
