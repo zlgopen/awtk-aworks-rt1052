@@ -1,4 +1,4 @@
-#include "aworks.h"
+﻿#include "aworks.h"
 #include "aw_task.h"
 
 #include "tkc/mem.h"
@@ -102,7 +102,10 @@ ret_t tk_thread_start(tk_thread_t* thread)
 ret_t tk_thread_join(tk_thread_t* thread)
 {
     return_value_if_fail(thread != NULL, RET_BAD_PARAMS);
-
+    /* 
+     * 线程自然退出下 aw_task_valid 会返回 FALSE，
+     * 在调用 aw_task_join 是等待线程自然退出，如果线程自然退出的话，会自然释放资源。
+     */
     if (!aw_task_valid(thread->id) || aw_task_join(thread->id, &thread->status) == AW_OK) {
         thread->id = AW_TASK_ID_INVALID;
         thread->running = FALSE;
@@ -121,9 +124,13 @@ void* tk_thread_get_args(tk_thread_t* thread)
 
 ret_t tk_thread_destroy(tk_thread_t* thread)
 {
-    return_value_if_fail(thread != NULL && thread->id != AW_TASK_ID_INVALID, RET_BAD_PARAMS);
-
-    return_value_if_fail(aw_task_terminate(thread->id) == AW_OK, RET_FAIL);
+    return_value_if_fail(thread != NULL, RET_BAD_PARAMS);
+    /*
+     * 创建了线程了，但是没有等待 join 直接就退出的话，需要调用 aw_task_terminate 函数来释放资源。
+     */
+    if (thread->id != AW_TASK_ID_INVALID && aw_task_valid(thread->id)) {
+      return_value_if_fail(aw_task_terminate(thread->id) == AW_OK, RET_FAIL);
+    }
 
     memset(thread, 0x00, sizeof(tk_thread_t));
     TKMEM_FREE(thread);
