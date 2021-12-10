@@ -119,6 +119,7 @@ copyAwtkFiles('src/widget_animators', 'awtk/src/widget_animators')
 copyAwtkFiles('src/window_animators', 'awtk/src/window_animators')
 copyAwtkFiles('src/dialog_highlighters', 'awtk/src/dialog_highlighters')
 
+copyAwtkFile('src/tkc.h', 'awtk/src/tkc.h')
 copyAwtkFile('src/awtk.h', 'awtk/src/awtk.h')
 copyAwtkFile('src/awtk_tkc.h', 'awtk/src/awtk_tkc.h')
 copyAwtkFile('src/awtk_base.h', 'awtk/src/awtk_base.h')
@@ -163,8 +164,7 @@ INPUT_METHODS_FILES=['input_engines/input_engine_pinyin.cpp',
     'input_engines/ime_utils.h',
     'input_methods/input_method_creator.c',
     'input_methods/input_method_default.inc',
-    'input_methods/input_method_null.inc',
-    'input_methods/suggest_words.inc']
+    'input_methods/input_method_null.inc']
 for f in INPUT_METHODS_FILES:
     sfilename=os.path.join('src/', f);
     dfilename=os.path.join('awtk/src/', f);
